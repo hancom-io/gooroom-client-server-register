@@ -91,7 +91,7 @@ class ServerCertification(Certification):
             self.result['log'] = [(_('Getting list of Gooroom platform management server...'))]
             self._add_hosts(data['domain'])
             self.result['log'].append(_('List of Gooroom platform management server registration completed.'))
-        except requests.exceptions.ConnectionError as error:
+        except (requests.exceptions.ConnectionError, socket.timeout) as error:
             self.result['err'] = '102'
             self.result['log'].append((type(error), error))
         except (TypeError, ValueError):
@@ -129,6 +129,7 @@ class ServerCertification(Certification):
         else:
             # get root certificate from gooroom key server certificate chain
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(5)
             s.connect((domain, 443))
 
             ssl_context = OpenSSL.SSL.Context(OpenSSL.SSL.TLSv1_2_METHOD)
