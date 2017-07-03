@@ -56,6 +56,7 @@
                   <object class="GtkEntry" id="entry_address">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="valign">center</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -377,6 +378,7 @@
               <object class="GtkEntry" id="entry_password">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="valign">center</property>
                 <property name="margin_right">50</property>
                 <property name="hexpand">True</property>
                 <property name="visibility">False</property>
