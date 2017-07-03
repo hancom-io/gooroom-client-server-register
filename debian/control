@@ -1,0 +1,13 @@
+Source: gooroom-client-server-register
+Section: admin
+Priority: optional
+Maintainer: Gooroom Engineering Team <devel-os@gooroom.kr>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+Homepage: http://www.gooroom.kr
+
+Package: gooroom-client-server-register
+Architecture: all
+Depends: ca-certificates, ssl-cert, openssl, python3, python3-openssl, python3-requests, python3-gi
+Description: The Gooroom Client Server Register
+ Register certificate of gooroom root CA & Request to generate a gooroom client certificate.
