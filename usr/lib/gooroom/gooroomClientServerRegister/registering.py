@@ -32,38 +32,45 @@ class RegisterThread(threading.Thread):
         return result_text
 
     def run(self):
-        textbuffer = self.application.builder.get_object('textbuffer_result')
-        client_data = next(self.datas)
-        server_certification = certification.ServerCertification()
-        sc = server_certification.certificate(client_data)
-        for server_result in sc:
-            result_text = self.result_format(server_result['log'])
-            current_text = textbuffer.get_text(textbuffer.get_start_iter(),
-                textbuffer.get_end_iter(),
-                True)
+        try:
+            textbuffer = self.application.builder.get_object('textbuffer_result')
+            client_data = next(self.datas)
+            server_certification = certification.ServerCertification()
+            sc = server_certification.certificate(client_data)
+            for server_result in sc:
+                result_text = self.result_format(server_result['log'])
+                current_text = textbuffer.get_text(textbuffer.get_start_iter(),
+                    textbuffer.get_end_iter(),
+                    True)
 
+                Gdk.threads_enter()
+                textbuffer.set_text('{0}\n{1}'.format(current_text, result_text))
+                Gdk.threads_leave()
+
+                if server_result['err']:
+                    raise Exception
+
+            server_data = next(self.datas)
+            client_certification = certification.ClientCertification(client_data['domain'])
+            cc = client_certification.certificate(server_data)
+            for client_result in cc:
+                result_text = self.result_format(client_result['log'])
+                current_text = textbuffer.get_text(textbuffer.get_start_iter(),
+                    textbuffer.get_end_iter(),
+                    True)
+
+                Gdk.threads_enter()
+                textbuffer.set_text('{0}\n{1}'.format(current_text, result_text))
+                Gdk.threads_leave()
+                if client_result['err']:
+                    raise Exception
+        except Exception as e:
+            print(e)
+        finally:
             Gdk.threads_enter()
-            textbuffer.set_text('{0}\n{1}'.format(current_text, result_text))
+            self.application.builder.get_object('button_ok').set_sensitive(True)
+            self.application.builder.get_object('button_prev2').set_sensitive(True)
             Gdk.threads_leave()
-
-            if server_result['err']:
-                return
-
-        server_data = next(self.datas)
-        client_certification = certification.ClientCertification(client_data['domain'])
-        cc = client_certification.certificate(server_data)
-        for client_result in cc:
-            result_text = self.result_format(client_result['log'])
-            current_text = textbuffer.get_text(textbuffer.get_start_iter(),
-                textbuffer.get_end_iter(),
-                True)
-
-            Gdk.threads_enter()
-            textbuffer.set_text('{0}\n{1}'.format(current_text, result_text))
-            Gdk.threads_leave()
-            if client_result['err']:
-                return
-
 
 class Registering():
     "Registering parent class"
@@ -170,6 +177,9 @@ class GUIRegistering(Registering):
     def register(self, button):
         textbuffer = self.builder.get_object('textbuffer_result')
         textbuffer.set_text('')
+        self.builder.get_object('button_ok').set_sensitive(False)
+        self.builder.get_object('button_prev2').set_sensitive(False)
+
         datas = self.get_datas()
         self.next_page(button)
         register_thread = RegisterThread(datas, self)

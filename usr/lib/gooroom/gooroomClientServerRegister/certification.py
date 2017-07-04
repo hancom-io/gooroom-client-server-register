@@ -93,7 +93,7 @@ class ServerCertification(Certification):
             self.result['log'] = [(_('Getting list of Gooroom platform management server...'))]
             self._add_hosts(data['domain'])
             self.result['log'].append(_('List of Gooroom platform management server registration completed.'))
-        except (requests.exceptions.ConnectionError, socket.timeout) as error:
+        except (OSError, requests.exceptions.ConnectionError, socket.timeout) as error:
             self.result['err'] = '102'
             self.result['log'].append((type(error), error))
         except (TypeError, ValueError):
@@ -227,16 +227,18 @@ class ClientCertification(Certification):
         self.client_key = '/etc/ssl/private/gooroom_client.key'
 
     def check_data(self, data):
+        self.result['log'].append(_('Requesting client certificate.'))
+
         if not data['cn']:
             self.result['err'] = '101'
             self.result['log'].append(_('Check the client name.'))
         elif not data['ou']:
             self.result['err'] = '101'
             self.result['log'].append(_('Check the organizational unit.'))
-        elif not data['id']:
+        elif not data['user_id']:
             self.result['err'] = '101'
             self.result['log'].append(_('Check the gooroom admin ID.'))
-        elif not data['password']:
+        elif not data['user_pw']:
             self.result['err'] = '101'
             self.result['log'].append(_('Check the password.'))
         elif data['valid_date']:
@@ -247,7 +249,9 @@ class ClientCertification(Certification):
                 self.result['log'].append(_('Incorrect date format, should be YYYY-MM-DD'))
 
     def certificate(self, data):
-        self.result['log'].append(_('Requesting client certificate.'))
+        self.check_data(data)
+        yield self.result
+
         csr = self.generate_csr(data['cn'], data['ou'])
         data['csr'] = csr
         url = 'https://%s/gkm/v1/client/register' % self.domain
