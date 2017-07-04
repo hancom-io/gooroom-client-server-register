@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gooroom\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-03 15:37+0900\n"
+"POT-Creation-Date: 2017-07-04 11:29+0900\n"
 "PO-Revision-Date: 2017-07-03 15:37+0900\n"
 "Last-Translator: gooroom <gooroom@gooroom.kr>\n"
 "Language-Team: gooroom <gooroom@gooroom.kr>\n"
@@ -17,72 +17,76 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.6.10\n"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:68
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:69
 msgid "Fail to register Gooroom Platform Management Server complete."
 msgstr "구름 플랫폼 관리 서버 등록이 실패했습니다."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:75
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:76
 msgid "Getting certificate of gooroom root CA..."
 msgstr "구름 루트 CA의 인증서를 얻는중..."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:77
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:78
 msgid "Server registration completed."
 msgstr "서버 등록 완료."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:91
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:85
+msgid "Unknown Error Occurred."
+msgstr "알수없는 오류가 발생했습니다."
+
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:93
 msgid "Getting list of Gooroom platform management server..."
 msgstr "구름 플랫폼 관리 서버의 리스트를 받아오는중..."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:93
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:95
 msgid "List of Gooroom platform management server registration completed."
 msgstr "구름 플랫폼 관리 서버의 리스트 동록이 완료되었습니다."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:99
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:101
 msgid "Server response type is wrong. Contact your server administrator."
 msgstr "서버 인증서가 존재하지 않습니다. 서버 관리자에게 문의하세요."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:114
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:116
 msgid "Certificate path of gooroom root CA is not exists."
 msgstr "구름 루트 CA의 인증서 경로가 존재하지 않습니다."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:117
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:119
 msgid "Start server registering."
 msgstr "서버 등록을 시작합니다."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:220
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:232
 msgid "Check the client name."
 msgstr "단말 이름을 확인하세요."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:223
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:235
 msgid "Check the organizational unit."
 msgstr "단말 조직 단위를 확인하세요."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:226
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:238
 msgid "Check the gooroom admin ID."
 msgstr "구름 관리자 ID를 확인하세요."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:229
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:241
 msgid "Check the password."
 msgstr "비밀번호를 확인하세요."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:235
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:247
 msgid "Incorrect date format, should be YYYY-MM-DD"
 msgstr "날짜 형식이 올바르지 않으며 YYYY-MM-DD 여아 합니다"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:238
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:250
 msgid "Requesting client certificate."
 msgstr "단말 인증서를 요청하는중."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:254
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:266
 msgid "Client certificate issue failed."
 msgstr "단말 인증서 발급이 실패하였습니다."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:258
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:270
 msgid "Client registration completed."
 msgstr "단말 등록 완료."
 
 #: usr/lib/gooroom/gooroomClientServerRegister/gooroom-client-server-register.py:10
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:98
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:96
 msgid ""
 "Register certificate of gooroom root CA & gooroom platform management server"
 msgstr "구름 루트 CA 인증서와 구름 플랫폼 관리 서버를 등록합니다."
@@ -120,22 +124,22 @@ msgid "Certificate path of gooroom root CA"
 msgstr "구름 루트 CA의 인증서 경로"
 
 #: usr/lib/gooroom/gooroomClientServerRegister/gooroom-client-server-register.py:22
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:106
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:104
 msgid "Client name"
 msgstr "단말 이름"
 
 #: usr/lib/gooroom/gooroomClientServerRegister/gooroom-client-server-register.py:23
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:107
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:105
 msgid "Client organizational unit"
 msgstr "단말 조직 단위"
 
 #: usr/lib/gooroom/gooroomClientServerRegister/gooroom-client-server-register.py:24
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:110
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:108
 msgid "Gooroom admin ID"
 msgstr "구름 관리자 ID"
 
 #: usr/lib/gooroom/gooroomClientServerRegister/gooroom-client-server-register.py:25
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:111
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:109
 msgid "Password"
 msgstr "비밀번호"
 
@@ -155,102 +159,102 @@ msgstr "구름 단말 서버 등록기 0.9"
 msgid "Permission denied."
 msgstr "허가 거부"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:95
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:93
 msgid "Gooroom Client Server Register"
 msgstr "구름 단말 서버 등록기"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:99
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:97
 msgid "Domain"
 msgstr "도메인"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:100
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:98
 msgid "(Option)Select the certificate path of gooroom root CA"
 msgstr "(옵션)구름 루트 CA의 인증서를 선택하세요."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:101
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:99
 msgid "Enter the domain name"
 msgstr "도메인 이름을 입력하세요"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:103
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:101
 msgid "browse..."
 msgstr "탐색..."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:104
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:102
 msgid "Register"
 msgstr "등록"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:105
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:103
 msgid "Register certificate of Gooroom root CA on the client"
 msgstr "단말에 구름 루트 CA 인증서를 등록합니다"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:108
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:106
 msgid "(Option)Certificate expiration date"
 msgstr "(옵션)인증서 유효 기간"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:112
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:110
 msgid "Send the request to the gooroom platform management server."
 msgstr "구름 플랫폼 관리 서버에게 요청을 보냅니다."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:113
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:111
 msgid "(Option)Comment"
 msgstr "(옵션)설명"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:114
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:112
 msgid "Result data"
 msgstr "결과 데이터"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:136
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:134
 msgid "Please enter the domain"
 msgstr "도메인을 이렵하세요"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:148
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:146
 msgid "Select a certificate"
 msgstr "인증서 선택"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:163
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:161
 msgid "Certificate files"
 msgstr "인증서"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:168
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:166
 msgid "Any files"
 msgstr "모든 파일"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:199
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:198
 msgid "Gooroom Management Server Registration"
 msgstr "구름 관리 서버 등록"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:215
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:214
 msgid "Gooroom Client Server Register.\n"
 msgstr "구름 단말 서버 등록기.\n"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:217
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:216
 msgid "Enter the domain name: "
 msgstr "도메인 이름을 입력하세요: "
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:218
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:217
 msgid "(Option)Enter the certificate path of gooroom root CA: "
 msgstr "(옵션)구름 루트 CA의 인증서 경로를 입력하세요: "
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:222
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:221
 msgid "Enter the client name: "
 msgstr "단말 이름을 입력하세요: "
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:223
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:222
 msgid "Enter the organizational unit: "
 msgstr "조직 단위를 입력하세요: "
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:224
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:223
 msgid "Enter the gooroom admin ID: "
 msgstr "구름 관리자 ID를 입력하세요: "
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:225
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:224
 msgid "Enter the password: "
 msgstr "비밀번호를 입력하세요: "
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:226
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:225
 msgid "(Option)Enter the valid date(YYYY-MM-DD): "
 msgstr "(옵션)유효 기간을 입력하세요(YYYY-MM-DD): "
 
-#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:227
+#: usr/lib/gooroom/gooroomClientServerRegister/registering.py:226
 msgid "(Option)Enter the comment: "
 msgstr "(옵션)설명을 입력하세요: "
