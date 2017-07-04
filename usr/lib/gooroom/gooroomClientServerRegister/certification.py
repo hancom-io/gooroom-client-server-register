@@ -10,6 +10,7 @@ import os
 import shutil
 import socket
 import subprocess
+import time
 from datetime import datetime
 
 import OpenSSL
@@ -78,9 +79,10 @@ class ServerCertification(Certification):
         except (ConnectionRefusedError, socket.gaierror) as error:
             self.result['err'] = '102'
             self.result['log'].append((type(error), error))
-        except subprocess.CalledProcessError as error:
-            self.result['err'] = '103'
+        except Exception as error:
+            self.result['err'] = '110'
             self.result['log'].append((type(error), error))
+            self.result['log'].append(_('Unknown Error Occurred.'))
 
         if self.result['err']:
             self.result['log'].append(self.err_msg)
@@ -136,7 +138,16 @@ class ServerCertification(Certification):
             ssl_conn = OpenSSL.SSL.Connection(ssl_context, s)
             ssl_conn.set_connect_state()
             ssl_conn.set_tlsext_host_name(bytes(domain.encode('utf-8')))
-            ssl_conn.do_handshake()
+            tries = 0
+            while True:
+                try:
+                    ssl_conn.do_handshake()
+                    break
+                except OpenSSL.SSL.WantReadError:
+                    tries += 1
+                    if tries >= 5:
+                        raise
+                    time.sleep(0.1)
 
             certs = ssl_conn.get_peer_cert_chain()
             server_crt = ssl_conn.get_peer_certificate()
