@@ -104,7 +104,7 @@ class GUIRegistering(Registering):
         self.builder.get_object('label_address').set_text(_('Domain'))
         self.builder.get_object('label_path').set_text(_('(Option)Select the certificate path of gooroom root CA'))
         self.builder.get_object('entry_address').set_placeholder_text(_('Enter the domain name'))
-        self.builder.get_object('label_file').set_text('')
+        self.builder.get_object('entry_file').set_text('')
         self.builder.get_object('button_browse').set_label(_('browse...'))
         self.builder.get_object('button_register').set_label(_('Register'))
         self.builder.get_object('label_subtitle2').set_text(_('Register certificate of Gooroom root CA on the client'))
@@ -159,7 +159,7 @@ class GUIRegistering(Registering):
 
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.builder.get_object('label_file').set_text(dialog.get_filename())
+            self.builder.get_object('entry_file').set_text(dialog.get_filename())
 
         dialog.destroy()
 
@@ -189,7 +189,7 @@ class GUIRegistering(Registering):
         "Return input information. notebook page 0 and 1"
         server_data = {}
         server_data['domain'] = self.builder.get_object('entry_address').get_text()
-        server_data['path'] = self.builder.get_object('label_file').get_text()
+        server_data['path'] = self.builder.get_object('entry_file').get_text()
         yield server_data
 
         client_data = {}
