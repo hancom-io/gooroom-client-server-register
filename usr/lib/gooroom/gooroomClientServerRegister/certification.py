@@ -33,6 +33,11 @@ class Certification():
         "do certificate"
         raise NotImplementedError("Implement certificate method.")
 
+    def remove_file(self, path):
+        "remove file if existss"
+        if os.path.exists(path):
+            os.remove(path)
+
     def response(self, res):
         """data is response from server
         response type is json type, if not raise error.
@@ -74,6 +79,7 @@ class ServerCertification(Certification):
 
         try:
             self.result['log'] = [(_('Getting certificate of gooroom root CA...'))]
+            self.remove_file(self.root_crt_path)
             self.get_root_certificate(data)
             self.result['log'].append(_('Server registration completed.'))
         except (ConnectionRefusedError, socket.gaierror) as error:
@@ -252,10 +258,13 @@ class ClientCertification(Certification):
         self.check_data(data)
         yield self.result
 
+        self.remove_file(self.client_key)
         csr = self.generate_csr(data['cn'], data['ou'])
         data['csr'] = csr
         url = 'https://%s/gkm/v1/client/register' % self.domain
+
         try:
+            self.result['log'] = []
             res = requests.post(url, data=data, timeout=5)
             response_data = self.response(res)
             # save crt

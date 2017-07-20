@@ -8,11 +8,12 @@ import time
 import copy
 
 import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk, Gtk
 
 import certification
 
-gi.require_version('Gtk', '3.0')
 
 
 gettext.install("gooroom-client-server-register", "/usr/share/gooroom/locale")
