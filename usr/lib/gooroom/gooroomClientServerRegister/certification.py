@@ -6,6 +6,7 @@ Make csr and singing from client private key and save csr.`
 import configparser
 import gettext
 import grp
+import hashlib
 import os
 import shutil
 import socket
@@ -265,7 +266,10 @@ class ClientCertification(Certification):
 
         try:
             self.result['log'] = []
-            res = requests.post(url, data=data, timeout=5)
+            hash_pw = hashlib.sha256(data['user_pw'].encode()).hexdigest()
+            data['user_pw'] = hashlib.sha256((data['user_id']+hash_pw).encode()).hexdigest()
+
+            res = requests.post(url, data=data, timeout=30)
             response_data = self.response(res)
             # save crt
             with open(self.client_crt, 'w') as f:

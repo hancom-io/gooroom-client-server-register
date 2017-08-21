@@ -15,7 +15,6 @@ from gi.repository import Gdk, Gtk
 import certification
 
 
-
 gettext.install("gooroom-client-server-register", "/usr/share/gooroom/locale")
 
 class RegisterThread(threading.Thread):
@@ -66,7 +65,7 @@ class RegisterThread(threading.Thread):
                 if client_result['err']:
                     raise Exception
         except Exception as e:
-            print(e)
+            print(type(e), e)
         finally:
             Gdk.threads_enter()
             self.application.builder.get_object('button_ok').set_sensitive(True)
