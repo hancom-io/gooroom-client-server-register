@@ -175,8 +175,6 @@ class ServerCertification(Certification):
         """address is (domain or IP) or certificate path
         seperated by server_crt_flag
         """
-        # common: register ca-certificate
-        # TODO: roll back ca certificates need?
         update = ['update-ca-certificates', '--fresh']
         subprocess.check_output(update, shell=False)
 

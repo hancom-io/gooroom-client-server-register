@@ -13,18 +13,27 @@ def argument_parser():
     subparsers.required = True
     gui_parser = subparsers.add_parser('gui', help=_('Run as gtk graphical user interface'))
     cli_parser = subparsers.add_parser('cli', help=_('Run as command line interface'))
-    ni_parser = subparsers.add_parser('noninteractive', help=_('Run as Noninteractive with shell.'))
+    example = """ex)gooroom-client-server-register noninteractive -d gkm.gooroom.kr
+                                                [-C /usr/local/share/ca-certificates/server.crt]
+                                                 -n client003
+                                                 -u gooroom
+                                                 -i admin
+                                                 -p admin_password
+                                                [-e 2020-01-01]
+                                                [-c 2F ooo]"""
+    ni_parser = subparsers.add_parser('noninteractive', description=example,
+                                      help=_('Run as Noninteractive with shell.'),
+                                      formatter_class=argparse.RawTextHelpFormatter)
     ni_help = subparsers.add_parser('noninteractive --help', help=_('Print help on the noninteractive command'))
 
-    group = ni_parser.add_argument_group('request information', description=_('Information for registering client certificate'))
-    group.add_argument('--domain', help=_('Domain name'), required=True)
-    group.add_argument('--path', nargs='?', help=_('Certificate path of gooroom root CA'))
-    group.add_argument('cn', help=_('Client name'))
-    group.add_argument('ou', help=_('Client organizational unit'))
-    group.add_argument('user_id', help=_('Gooroom admin ID'))
-    group.add_argument('user_pw', help=_('Password'))
-    group.add_argument('valid_date', help=_('(Option)Expiration date(YYYY-MM-DD)'), nargs='?', default='')
-    group.add_argument('comment', help=_('(Option)Comment of client'), nargs='?')
+    ni_parser.add_argument('-d', '--domain', required=True, help=_('Key management server hostname'))
+    ni_parser.add_argument('-C', '--CAfile', help=_('(Option)PEM format file of gooroom root CA certificate'), nargs='?')
+    ni_parser.add_argument('-n', '--name', required=True, help=_('Unique client common name to use for the client certificate'))
+    ni_parser.add_argument('-u', '--unit', required=True, help=_('Client organizational unit to use for the client certificate'))
+    ni_parser.add_argument('-i', '--id', required=True, help=_('GPMS admin ID'))
+    ni_parser.add_argument('-p', '--password', required=True, help=_('GPMS admin password'))
+    ni_parser.add_argument('-e', '--expiration-date', help=_('(Option)Certificates expiration date(format:YYYY-MM-DD)'), default='', nargs='?')
+    ni_parser.add_argument('-c', '--comment', help=_('(Option)Description of the certificate'), nargs='?')
     parser.add_argument('--version', action='version', version=_('Gooroom Client Server Register 0.9'))
 
     arguments = parser.parse_args()

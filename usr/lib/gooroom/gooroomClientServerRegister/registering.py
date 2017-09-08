@@ -100,22 +100,22 @@ class GUIRegistering(Registering):
         self.window.set_title(_('Gooroom Client Server Register'))
         self.window.set_icon_from_file('%s/icon/main-icon.png' % self.WORK_DIR)
 
-        self.builder.get_object('label_subtitle1').set_text(_("Register certificate of gooroom root CA & gooroom platform management server"))
+        self.builder.get_object('label_subtitle1').set_text(_("Register Gooroom Root CA in the client.\nAnd, add gooroom platform management servers from the server."))
         self.builder.get_object('label_address').set_text(_('Domain'))
         self.builder.get_object('label_path').set_text(_('(Option)Select the certificate path of gooroom root CA'))
         self.builder.get_object('entry_address').set_placeholder_text(_('Enter the domain name'))
         self.builder.get_object('entry_file').set_text('')
         self.builder.get_object('button_browse').set_label(_('browse...'))
         self.builder.get_object('button_register').set_label(_('Register'))
-        self.builder.get_object('label_subtitle2').set_text(_('Register certificate of Gooroom root CA on the client'))
+        self.builder.get_object('label_subtitle2').set_text(_('Generate a certificate signing request(CSR) based on the input value\nto receive a certificate from the server.'))
         self.builder.get_object('label_name').set_text(_('Client name'))
         self.builder.get_object('label_classify').set_text(_('Client organizational unit'))
         self.builder.get_object('label_date').set_text(_('(Option)Certificate expiration date'))
 
         self.builder.get_object('label_id').set_text(_('Gooroom admin ID'))
         self.builder.get_object('label_password').set_text(_('Password'))
-        self.builder.get_object('label_detail').set_text(_('Send the request to the gooroom platform management server.'))
         self.builder.get_object('label_comment').set_text(_('(Option)Comment'))
+        self.builder.get_object('label_detail').set_text(_('Send the request to the gooroom platform management server.'))
         self.builder.get_object('label_result').set_text(_('Result data'))
 
         self.builder.get_object('button_next').connect('clicked', self.next_page)
@@ -202,7 +202,6 @@ class GUIRegistering(Registering):
         yield client_data
 
     def show_info_dialog(self, message, error=None):
-        #parameter erros is error name using dialog title. message is details of error or real message
         dialog = Gtk.MessageDialog(self.builder.get_object('window1'), 0,
             Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 'info dialog')
         dialog.set_title(_('Gooroom Management Server Registration'))
@@ -219,18 +218,25 @@ class ShellRegistering(Registering):
     def __init__(self):
         Registering.__init__(self)
 
+    def input_surely(prompt):
+        user_input = ''
+        while not user_input:
+            user_input = input(prompt)
+
+        return user_input
+
     def cli(self):
         'Get request info from keyboard using cli'
         print(_('Gooroom Client Server Register.\n'))
         server_data = {}
-        server_data['domain'] = input(_('Enter the domain name: '))
+        server_data['domain'] = input_surely(_('Enter the domain name: '))
         server_data['path'] = input(_('(Option)Enter the certificate path of gooroom root CA: '))
         yield server_data
 
         client_data = {}
-        client_data['cn'] = input(_('Enter the client name: '))
-        client_data['ou'] = input(_('Enter the organizational unit: '))
-        client_data['user_id'] = input(_('Enter the gooroom admin ID: '))
+        client_data['cn'] = input_surely(_('Enter the client name: '))
+        client_data['ou'] = input_surely(_('Enter the organizational unit: '))
+        client_data['user_id'] = input_surely(_('Enter the gooroom admin ID: '))
         client_data['user_pw'] = getpass.getpass(_('Enter the password: '))
         client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
         client_data['comment'] = input(_('(Option)Enter the comment: '))
@@ -242,35 +248,36 @@ class ShellRegistering(Registering):
             server_data = next(datas)
 
         elif args.cmd == 'noninteractive':
-            server_data = {'domain':args.domain, 'path':args.path}
+            server_data = {'domain':args.domain, 'path':args.CAfile}
 
         server_certification = certification.ServerCertification()
         sc = server_certification.certificate(server_data)
         for result in sc:
             result_text = self.result_format(result['log'])
             if result['err']:
-                # ERROR. print result and exit
-                print("###########ERROR###########")
-                print(result['err'])
+                print("###########ERROR(%s)###########" % result['err'])
                 print(result_text)
-                exit(1)
+                exit(result['err'])
 
             print(result_text)
 
         if args.cmd == 'cli':
             client_data = next(datas)
         elif args.cmd == 'noninteractive':
-            del args.cmd
-            del args.domain
-            del args.path
-            client_data = vars(args)
+            client_data = {}
+            client_data['cn'] = args.name
+            client_data['ou'] = args.unit
+            client_data['user_id'] = args.id
+            client_data['user_pw'] = args.password
+            client_data['valid_date'] = args.expiration_date
+            client_data['comment'] = args.comment
 
         client_certification = certification.ClientCertification(server_data['domain'])
         cc = client_certification.certificate(client_data)
         for result in cc:
             result_text = self.result_format(result['log'])
             if result['err']:
-                print(result['err'])
+                print("###########ERROR(%s)###########" % result['err'])
                 print(result_text)
                 exit(1)
 
