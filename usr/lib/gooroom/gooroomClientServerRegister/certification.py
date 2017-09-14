@@ -103,11 +103,12 @@ class ServerCertification(Certification):
         except (OSError, requests.exceptions.ConnectionError, socket.timeout) as error:
             self.result['err'] = '102'
             self.result['log'].append((type(error), error))
-        except (TypeError, ValueError):
-            self.result['err'] = '104'
-            self.result['log'].append(('ResponseDataError', _('Server response type is wrong. Contact your server administrator.')))
         except ResponseError as error:
             self.result['err'] = '104'
+            self.result['log'].append((type(error), error))
+        except Exception as error:
+            self.result['err'] = '105'
+            self.result['log'].append(_('Server response type is wrong. Contact your server administrator.'))
             self.result['log'].append((type(error), error))
 
         if self.result['err']:
@@ -262,11 +263,11 @@ class ClientCertification(Certification):
         data['csr'] = csr
         url = 'https://%s/gkm/v1/client/register' % self.domain
 
-        try:
-            self.result['log'] = []
-            hash_pw = hashlib.sha256(data['user_pw'].encode()).hexdigest()
-            data['user_pw'] = hashlib.sha256((data['user_id']+hash_pw).encode()).hexdigest()
+        self.result['log'] = []
+        hash_pw = hashlib.sha256(data['user_pw'].encode()).hexdigest()
+        data['user_pw'] = hashlib.sha256((data['user_id']+hash_pw).encode()).hexdigest()
 
+        try:
             res = requests.post(url, data=data, timeout=30)
             response_data = self.response(res)
             # save crt
@@ -279,6 +280,10 @@ class ClientCertification(Certification):
         except ResponseError as error:
             self.result['err'] = '104'
             self.result['log'].append(_('Client certificate issue failed.'))
+            self.result['log'].append((type(error), error))
+        except Exception as error:
+            self.result['err'] = '105'
+            self.result['log'].append(_('Server response type is wrong. Contact your server administrator.'))
             self.result['log'].append((type(error), error))
         else:
             self._save_config('certificate', self.get_certificate_data(data['cn'], data['ou']))

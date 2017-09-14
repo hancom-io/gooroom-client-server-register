@@ -17,7 +17,7 @@ def argument_parser():
                                                 [-C /usr/local/share/ca-certificates/server.crt]
                                                  -n client003
                                                  -u gooroom
-                                                 -i admin
+                                                 -i admin_id
                                                  -p admin_password
                                                 [-e 2020-01-01]
                                                 [-c 2F ooo]"""
