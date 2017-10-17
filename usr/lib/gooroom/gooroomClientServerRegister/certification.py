@@ -34,7 +34,8 @@ class Certification():
         "do certificate"
         raise NotImplementedError("Implement certificate method.")
 
-    def remove_file(self, path):
+    @staticmethod
+    def remove_file(path):
         "remove file if existss"
         if os.path.exists(path):
             os.remove(path)
@@ -75,9 +76,6 @@ class ServerCertification(Certification):
         self.err_msg = _('Fail to register Gooroom Platform Management Server complete.')
 
     def certificate(self, data):
-        self.check_data(data)
-        yield self.result
-
         try:
             self.result['log'] = [(_('Getting certificate of gooroom root CA...'))]
             self.remove_file(self.root_crt_path)
@@ -216,6 +214,7 @@ class ServerCertification(Certification):
             server_ip = server_name + 'Ip'
             hosts += '{0}\t{1}\n'.format(gpms[server_ip], gpms[server_url])
             domain_datas[server_name] = gpms[server_url]
+
         hosts += '### Modify {} End gcsr\n'.format(modify_date)
 
         with open('/etc/hosts', 'w') as f:
@@ -259,7 +258,7 @@ class ClientCertification(Certification):
         yield self.result
 
         self.remove_file(self.client_key)
-        csr = self.generate_csr(data['cn'], data['ou'])
+        csr, private_key = self.generate_csr(data['cn'], data['ou'])
         data['csr'] = csr
         url = 'https://%s/gkm/v1/client/register' % self.domain
 
@@ -274,6 +273,9 @@ class ClientCertification(Certification):
             with open(self.client_crt, 'w') as f:
                 f.write(response_data['data'][0]['certInfo'])
                 del response_data['data'][0]['certInfo']
+
+            self.__save_key(private_key)
+            del private_key
 
             self.result['log'].append(response_data['status']['message'])
             self.result['log'].append(response_data['data'][0])
@@ -299,9 +301,8 @@ class ClientCertification(Certification):
         private_key = OpenSSL.crypto.dump_privatekey(
             OpenSSL.crypto.FILETYPE_PEM, key)
         self.__save_key(private_key)
-        del private_key
 
-        return key
+        return key, private_key
 
     def __save_key(self, private_key):
         """save key and change owner.
@@ -320,14 +321,14 @@ class ClientCertification(Certification):
         req.get_subject().CN = common_name
         req.get_subject().OU = organizational_unit
 
-        key = self.__generate_key()
+        key, private_key = self.__generate_key()
         req.set_pubkey(key)
         req.sign(key, 'sha256')
         del key
 
         csr = OpenSSL.crypto.dump_certificate_request(OpenSSL.crypto.FILETYPE_PEM, req)
         # Do not save csr
-        return csr
+        return csr, private_key
 
     def get_certificate_data(self, client_name, organizational_unit):
         "Return certificate section data of gcsr.config"

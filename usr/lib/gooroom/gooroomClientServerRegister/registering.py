@@ -65,11 +65,13 @@ class RegisterThread(threading.Thread):
                 if client_result['err']:
                     raise Exception
         except Exception as e:
+            Gdk.threads_enter()
+            self.application.builder.get_object('button_prev2').set_sensitive(True)
+            Gdk.threads_leave()
             print(type(e), e)
         finally:
             Gdk.threads_enter()
             self.application.builder.get_object('button_ok').set_sensitive(True)
-            self.application.builder.get_object('button_prev2').set_sensitive(True)
             Gdk.threads_leave()
 
 class Registering():

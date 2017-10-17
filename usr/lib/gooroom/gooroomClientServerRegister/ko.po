@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: Gooroom\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-09-08 14:36+0900\n"
-"PO-Revision-Date: 2017-07-03 15:37+0900\n"
+"PO-Revision-Date: 2017-10-17 17:33+0900\n"
 "Last-Translator: sungho.kang <shkang@gooroom.kr>\n"
 "Language-Team: gooroom <devel-os@gooroom.kr>\n"
 "Language: new\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: usr/lib/gooroom/gooroomClientServerRegister/certification.py:75
 msgid "Fail to register Gooroom Platform Management Server complete."
@@ -39,7 +39,7 @@ msgstr "구름 플랫폼 관리 서버의 리스트를 받아오는중..."
 
 #: usr/lib/gooroom/gooroomClientServerRegister/certification.py:102
 msgid "List of Gooroom platform management server registration completed."
-msgstr "구름 플랫폼 관리 서버의 리스트 동록이 완료되었습니다."
+msgstr "구름 플랫폼 관리 서버의 리스트 등록이 완료되었습니다."
 
 #: usr/lib/gooroom/gooroomClientServerRegister/certification.py:108
 msgid "Server response type is wrong. Contact your server administrator."
@@ -86,8 +86,7 @@ msgid "Client registration completed."
 msgstr "단말 등록 완료."
 
 #: usr/lib/gooroom/gooroomClientServerRegister/gooroom-client-server-register.py:10
-msgid ""
-"Register certificate of gooroom root CA & gooroom platform management server"
+msgid "Register certificate of gooroom root CA & gooroom platform management server"
 msgstr "구름 루트 CA 인증서와 구름 플랫폼 관리 서버를 등록합니다."
 
 #: usr/lib/gooroom/gooroomClientServerRegister/gooroom-client-server-register.py:12
@@ -158,7 +157,9 @@ msgstr "구름 단말 서버 등록기"
 msgid ""
 "Register Gooroom Root CA in the client.\n"
 "And, add gooroom platform management servers from the server."
-msgstr "단말에 구름 루트 CA를 등록 합니다.\n그리고, 구름 플랫폼 관리자 서버를 추가합니다."
+msgstr ""
+"단말에 구름 루트 CA를 등록 합니다.\n"
+"그리고, 구름 플랫폼 관리자 서버를 추가합니다."
 
 #: usr/lib/gooroom/gooroomClientServerRegister/registering.py:104
 msgid "Domain"
@@ -185,6 +186,8 @@ msgid ""
 "Generate a certificate signing request(CSR) based on the input value\n"
 "to receive a certificate from the server."
 msgstr ""
+"입력 값을 기반으로 인증서 서명 요청(CSR)을 생성하여 \n"
+"서버로부터 인증서를 받습니다."
 
 #: usr/lib/gooroom/gooroomClientServerRegister/registering.py:111
 msgid "Client name"
@@ -220,7 +223,7 @@ msgstr "결과 데이터"
 
 #: usr/lib/gooroom/gooroomClientServerRegister/registering.py:141
 msgid "Please enter the domain"
-msgstr "도메인을 이렵하세요"
+msgstr "도메인을 입력하세요"
 
 #: usr/lib/gooroom/gooroomClientServerRegister/registering.py:153
 msgid "Select a certificate"
@@ -273,4 +276,3 @@ msgstr "(옵션)유효 기간을 입력하세요(YYYY-MM-DD): "
 #: usr/lib/gooroom/gooroomClientServerRegister/registering.py:243
 msgid "(Option)Enter the comment: "
 msgstr "(옵션)설명을 입력하세요: "
-
