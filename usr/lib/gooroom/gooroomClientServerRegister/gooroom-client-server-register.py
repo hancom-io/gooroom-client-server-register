@@ -8,6 +8,9 @@ gettext.install('gooroom-client-server-register', '/usr/share/gooroom/locale')
 
 def argument_parser():
     parser = argparse.ArgumentParser(description=_('Register certificate of gooroom root CA & gooroom platform management server'))
+    #parser.add_argument('-h', '--help', help=_('show this help message and exit'))
+    #parser.add_argument('--help noninteractive', help=_('Show help on the noninteractive command'))
+    parser.add_argument('--version', action='version', version=_('Gooroom Client Server Register 0.9'))
 
     subparsers = parser.add_subparsers(dest='cmd', help=_('commands'))
     subparsers.required = True
@@ -17,6 +20,7 @@ def argument_parser():
                                                 [-C /usr/local/share/ca-certificates/server.crt]
                                                  -n client003
                                                  -u gooroom
+                                                [-o Default]
                                                  -i admin_id
                                                  -p admin_password
                                                 [-e 2020-01-01]
@@ -30,11 +34,11 @@ def argument_parser():
     ni_parser.add_argument('-C', '--CAfile', help=_('(Option)PEM format file of gooroom root CA certificate'), nargs='?')
     ni_parser.add_argument('-n', '--name', required=True, help=_('Unique client common name to use for the client certificate'))
     ni_parser.add_argument('-u', '--unit', required=True, help=_('Client organizational unit to use for the client certificate'))
+    ni_parser.add_argument('-o', '--organization', help=_('Client organization to use for the password hashing.'), default='Default', nargs='?')
     ni_parser.add_argument('-i', '--id', required=True, help=_('GPMS admin ID'))
     ni_parser.add_argument('-p', '--password', required=True, help=_('GPMS admin password'))
     ni_parser.add_argument('-e', '--expiration-date', help=_('(Option)Certificates expiration date(format:YYYY-MM-DD)'), default='', nargs='?')
     ni_parser.add_argument('-c', '--comment', help=_('(Option)Description of the certificate'), nargs='?')
-    parser.add_argument('--version', action='version', version=_('Gooroom Client Server Register 0.9'))
 
     arguments = parser.parse_args()
     return arguments

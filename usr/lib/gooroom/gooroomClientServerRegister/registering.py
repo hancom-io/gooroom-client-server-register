@@ -78,6 +78,8 @@ class Registering():
     "Registering parent class"
     def __init__(self):
         self.WORK_DIR = '/usr/lib/gooroom/gooroomClientServerRegister'
+        self.organizations = ['Default', 'NIA']
+
 
     def result_format(self, result):
         "Return result log pretty"
@@ -112,6 +114,7 @@ class GUIRegistering(Registering):
         self.builder.get_object('label_subtitle2').set_text(_('Generate a certificate signing request(CSR) based on the input value\nto receive a certificate from the server.'))
         self.builder.get_object('label_name').set_text(_('Client name'))
         self.builder.get_object('label_classify').set_text(_('Client organizational unit'))
+        self.builder.get_object('label_organization').set_text(_('Organization'))
         self.builder.get_object('label_date').set_text(_('(Option)Certificate expiration date'))
 
         self.builder.get_object('label_id').set_text(_('Gooroom admin ID'))
@@ -128,6 +131,12 @@ class GUIRegistering(Registering):
         self.builder.get_object('button_ok').connect('clicked', Gtk.main_quit)
         self.builder.get_object('button_close1').connect('clicked', Gtk.main_quit)
         self.builder.get_object('button_close2').connect('clicked', Gtk.main_quit)
+
+        combobox_organization = self.builder.get_object('combobox_organization')
+        for org in self.organizations:
+            combobox_organization.append_text(org)
+
+        combobox_organization.set_active(0)
 
         self.window.connect("delete-event", Gtk.main_quit)
         self.window.show_all()
@@ -197,6 +206,7 @@ class GUIRegistering(Registering):
         client_data = {}
         client_data['cn'] = self.builder.get_object('entry_name').get_text()
         client_data['ou'] = self.builder.get_object('entry_classify').get_text()
+        client_data['organization'] = self.builder.get_object('combobox_organization').get_active_text()
         client_data['user_id'] = self.builder.get_object('entry_id').get_text()
         client_data['user_pw'] = self.builder.get_object('entry_password').get_text()
         client_data['valid_date'] = self.builder.get_object('entry_date').get_text()
@@ -220,10 +230,17 @@ class ShellRegistering(Registering):
     def __init__(self):
         Registering.__init__(self)
 
-    def input_surely(prompt):
+    def input_surely(self, prompt):
         user_input = ''
         while not user_input:
             user_input = input(prompt)
+
+        return user_input
+
+    def input_organization(self, prompt):
+        user_input = ''
+        while user_input not in self.organizations:
+            user_input = input(prompt) or 'Default'
 
         return user_input
 
@@ -231,14 +248,15 @@ class ShellRegistering(Registering):
         'Get request info from keyboard using cli'
         print(_('Gooroom Client Server Register.\n'))
         server_data = {}
-        server_data['domain'] = input_surely(_('Enter the domain name: '))
+        server_data['domain'] = self.input_surely(_('Enter the domain name: '))
         server_data['path'] = input(_('(Option)Enter the certificate path of gooroom root CA: '))
         yield server_data
 
         client_data = {}
-        client_data['cn'] = input_surely(_('Enter the client name: '))
-        client_data['ou'] = input_surely(_('Enter the organizational unit: '))
-        client_data['user_id'] = input_surely(_('Enter the gooroom admin ID: '))
+        client_data['cn'] = self.input_surely(_('Enter the client name: '))
+        client_data['ou'] = self.input_surely(_('Enter the organizational unit: '))
+        client_data['organization'] = self.input_organization(_('Enter the organization[Default]: '))
+        client_data['user_id'] = self.input_surely(_('Enter the gooroom admin ID: '))
         client_data['user_pw'] = getpass.getpass(_('Enter the password: '))
         client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
         client_data['comment'] = input(_('(Option)Enter the comment: '))
@@ -250,6 +268,11 @@ class ShellRegistering(Registering):
             server_data = next(datas)
 
         elif args.cmd == 'noninteractive':
+            if args.organization not in self.organizations:
+                print('###########ERROR(101)###########')
+                print(_('Check the organization!'))
+                exit(101)
+
             server_data = {'domain':args.domain, 'path':args.CAfile}
 
         server_certification = certification.ServerCertification()
@@ -269,6 +292,7 @@ class ShellRegistering(Registering):
             client_data = {}
             client_data['cn'] = args.name
             client_data['ou'] = args.unit
+            client_data['organization'] = args.organization
             client_data['user_id'] = args.id
             client_data['user_pw'] = args.password
             client_data['valid_date'] = args.expiration_date

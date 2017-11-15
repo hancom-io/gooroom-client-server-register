@@ -160,10 +160,7 @@ class ServerCertification(Certification):
             server_crt = OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, server_crt)
 
             # TODO: register all key chain
-            for cert in certs:
-                root_crt = OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
-                if root_crt != server_crt:
-                    break
+            root_crt = OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, certs[-1])
 
             with open(self.root_crt_path, 'wb') as f:
                 f.write(root_crt)
@@ -253,6 +250,17 @@ class ClientCertification(Certification):
                 self.result['err'] = '101'
                 self.result['log'].append(_('Incorrect date format, should be YYYY-MM-DD'))
 
+    def hash_password(self, **kargs):
+        """
+        Password hash algorithms are required depending on the settings of gpms.
+        Argument: kargs(password, salt, etc...)
+
+        Return: hashed password(str)
+        """
+        hash_tmp = hashlib.sha256(kargs['password'].encode()).hexdigest()
+
+        return hashlib.sha256((kargs['id']+hash_tmp).encode()).hexdigest()
+
     def certificate(self, data):
         self.check_data(data)
         yield self.result
@@ -263,8 +271,9 @@ class ClientCertification(Certification):
         url = 'https://%s/gkm/v1/client/register' % self.domain
 
         self.result['log'] = []
-        hash_pw = hashlib.sha256(data['user_pw'].encode()).hexdigest()
-        data['user_pw'] = hashlib.sha256((data['user_id']+hash_pw).encode()).hexdigest()
+
+        data['user_pw'] = self.hash_password(id=data['user_id'],
+                                             password=data['user_pw'])
 
         try:
             res = requests.post(url, data=data, timeout=30)
@@ -288,7 +297,7 @@ class ClientCertification(Certification):
             self.result['log'].append(_('Server response type is wrong. Contact your server administrator.'))
             self.result['log'].append((type(error), error))
         else:
-            self._save_config('certificate', self.get_certificate_data(data['cn'], data['ou']))
+            self._save_config('certificate', self.get_certificate_data(data['cn'], data['ou'], data['organization']))
             self.result['log'].append(_('Client registration completed.'))
 
         yield self.result
@@ -330,10 +339,11 @@ class ClientCertification(Certification):
         # Do not save csr
         return csr, private_key
 
-    def get_certificate_data(self, client_name, organizational_unit):
+    def get_certificate_data(self, client_name, organizational_unit, organization):
         "Return certificate section data of gcsr.config"
         sc = ServerCertification()
         certificate_data = {'organizational_unit':organizational_unit,
+            'organization':organization.lower(),
             'client_crt':self.client_crt,
             'client_name':client_name,
             'server_crt':sc.root_crt_path}
