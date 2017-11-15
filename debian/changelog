@@ -1,3 +1,22 @@
+gooroom-client-server-register (0.9.1+grm1u1) unstable; urgency=medium
+
+  [ sungho.kang ]
+  * [157ea783] Added socket connection timeout
+  * [42c1b7da] Fixed want read error during handshake
+  * [5ee58408] l10n
+  * [b8e71a19] Fixed some errors
+  * [7fc1f50c] Modified UX
+  * [4e86030d] Modified gtk warnings
+  * [3998fd66] add password hashing
+  * [44e15a51] Edit help page update l10n change cli
+  * [ce8b2691] Caught wrong response type
+  * [6d6d26cf] Modified private key save time
+  * [9b780bec] Changed desktop icon. Added organization argumnet. Updated l10n.
+
+  [ Gooroom Autobuilder ]
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Wed, 15 Nov 2017 18:30:25 +0900
+
 gooroom-client-server-register (0.9) unstable; urgency=low
 
   * Initial empty repository 
