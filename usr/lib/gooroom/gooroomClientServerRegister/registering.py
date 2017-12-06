@@ -102,7 +102,7 @@ class GUIRegistering(Registering):
         self.window = self.builder.get_object('window1')
         self.window.set_default_size(600, 380)
         self.window.set_title(_('Gooroom Client Server Register'))
-        self.window.set_icon_from_file('%s/icon/main-icon.png' % self.WORK_DIR)
+        self.window.set_icon_name('gooroom-client-server-register')
 
         self.builder.get_object('label_subtitle1').set_text(_("Register Gooroom Root CA in the client.\nAnd, add gooroom platform management servers from the server."))
         self.builder.get_object('label_address').set_text(_('Domain'))
@@ -218,7 +218,7 @@ class GUIRegistering(Registering):
             Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 'info dialog')
         dialog.set_title(_('Gooroom Management Server Registration'))
         dialog.format_secondary_text(message)
-        dialog.set_icon_from_file("%s/icon/main-icon.png" % self.WORK_DIR)
+        dialog.set_icon_name('gooroom-client-server-register')
         dialog.props.text = error
         response = dialog.run()
         if response == Gtk.ResponseType.OK or response == Gtk.ResponseType.CLOSE:
