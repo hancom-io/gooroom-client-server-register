@@ -20,7 +20,7 @@ def argument_parser():
                                                 [-C /usr/local/share/ca-certificates/server.crt]
                                                  -n client003
                                                  -u gooroom
-                                                [-o Default]
+                                                [-t Default]
                                                  -i admin_id
                                                  -p admin_password
                                                 [-e 2020-01-01]
@@ -34,7 +34,7 @@ def argument_parser():
     ni_parser.add_argument('-C', '--CAfile', help=_('(Option)PEM format file of gooroom root CA certificate'), nargs='?')
     ni_parser.add_argument('-n', '--name', required=True, help=_('Unique client common name to use for the client certificate'))
     ni_parser.add_argument('-u', '--unit', required=True, help=_('Client organizational unit to use for the client certificate'))
-    ni_parser.add_argument('-o', '--organization', help=_('Client organization to use for the password hashing.'), default='Default', nargs='?')
+    ni_parser.add_argument('-t', '--password-system-type', help=_('Password system type to use for the password hashing.'), default='Default', nargs='?')
     ni_parser.add_argument('-i', '--id', required=True, help=_('GPMS admin ID'))
     ni_parser.add_argument('-p', '--password', required=True, help=_('GPMS admin password'))
     ni_parser.add_argument('-e', '--expiration-date', help=_('(Option)Certificates expiration date(format:YYYY-MM-DD)'), default='', nargs='?')

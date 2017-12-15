@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gooroom\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-15 16:03+0900\n"
-"PO-Revision-Date: 2017-11-15 16:05+0900\n"
+"POT-Creation-Date: 2017-12-15 13:47+0900\n"
+"PO-Revision-Date: 2017-12-15 13:50+0900\n"
 "Last-Translator: sungho.kang <shkang@gooroom.kr>\n"
 "Language-Team: gooroom <devel-os@gooroom.kr>\n"
 "Language: new\n"
@@ -42,7 +42,7 @@ msgid "List of Gooroom platform management server registration completed."
 msgstr "구름 플랫폼 관리 서버의 리스트 등록이 완료되었습니다."
 
 #: usr/lib/gooroom/gooroomClientServerRegister/certification.py:109
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:306
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:297
 msgid "Server response type is wrong. Contact your server administrator."
 msgstr "서버 인증서가 존재하지 않습니다. 서버 관리자에게 문의하세요."
 
@@ -78,11 +78,11 @@ msgstr "비밀번호를 확인하세요."
 msgid "Incorrect date format, should be YYYY-MM-DD"
 msgstr "날짜 형식이 올바르지 않으며 YYYY-MM-DD 여아 합니다"
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:302
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:293
 msgid "Client certificate issue failed."
 msgstr "단말 인증서 발급이 실패하였습니다."
 
-#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:310
+#: usr/lib/gooroom/gooroomClientServerRegister/certification.py:301
 msgid "Client registration completed."
 msgstr "단말 등록 완료."
 
@@ -131,8 +131,8 @@ msgid "Client organizational unit to use for the client certificate"
 msgstr "단말 인증서에 사용할 단말 조직 단위"
 
 #: usr/lib/gooroom/gooroomClientServerRegister/gooroom-client-server-register.py:37
-msgid "Client organization to use for the password hashing."
-msgstr "비밀번호 해싱에 사용할 단말 조직 단위"
+msgid "Password system type to use for the password hashing."
+msgstr "비밀번호 해싱에 사용할 암호 시스템 유형."
 
 #: usr/lib/gooroom/gooroomClientServerRegister/gooroom-client-server-register.py:38
 msgid "GPMS admin ID"
@@ -203,8 +203,8 @@ msgid "Client organizational unit"
 msgstr "단말 조직 단위"
 
 #: usr/lib/gooroom/gooroomClientServerRegister/registering.py:117
-msgid "Organization"
-msgstr "조직"
+msgid "Password system type"
+msgstr "비밀번호 체계"
 
 #: usr/lib/gooroom/gooroomClientServerRegister/registering.py:118
 msgid "(Option)Certificate expiration date"
@@ -271,8 +271,8 @@ msgid "Enter the organizational unit: "
 msgstr "조직 단위를 입력하세요: "
 
 #: usr/lib/gooroom/gooroomClientServerRegister/registering.py:258
-msgid "Enter the organization[Default]: "
-msgstr "조직을 입력하세요[Default]: "
+msgid "Enter the password system type[Default]: "
+msgstr "비밀번호 체계를 입력하세요: "
 
 #: usr/lib/gooroom/gooroomClientServerRegister/registering.py:259
 msgid "Enter the gooroom admin ID: "
@@ -291,5 +291,14 @@ msgid "(Option)Enter the comment: "
 msgstr "(옵션)설명을 입력하세요: "
 
 #: usr/lib/gooroom/gooroomClientServerRegister/registering.py:273
-msgid "Check the organization!"
-msgstr "조직을 확인하세요!"
+msgid "Check the password system type!"
+msgstr "비밀번호 체계를 확인하세요."
+
+#~ msgid "Organization"
+#~ msgstr "조직"
+
+#~ msgid "Enter the organization[Default]: "
+#~ msgstr "조직을 입력하세요[Default]: "
+
+#~ msgid "Check the organization!"
+#~ msgstr "조직을 확인하세요!"
