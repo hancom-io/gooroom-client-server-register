@@ -1,3 +1,16 @@
+gooroom-client-server-register (0.9.2+grm1u1) unstable; urgency=medium
+
+  [ sungho.kang ]
+  * [f09c9613] Changed icon file to name
+  * [a72d8d2d] Modified organization to password system type
+
+  [ Hwanii ]
+  * [eca806bb] The recent license policy change has been reflected.
+
+  [ Gooroom Autobuilder ]
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Wed, 14 Mar 2018 12:10:21 +0900
+
 gooroom-client-server-register (0.9.1+grm1u1) unstable; urgency=medium
 
   [ sungho.kang ]
