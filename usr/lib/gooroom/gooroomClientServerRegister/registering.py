@@ -78,7 +78,7 @@ class Registering():
     "Registering parent class"
     def __init__(self):
         self.WORK_DIR = '/usr/lib/gooroom/gooroomClientServerRegister'
-        self.password_system_types = ['Default', 'Type1']
+        self.password_system_types = ['Default', 'Type1', 'Type2']
 
 
     def result_format(self, result):
