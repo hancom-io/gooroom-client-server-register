@@ -77,7 +77,8 @@ class RegisterThread(threading.Thread):
 class Registering():
     "Registering parent class"
     def __init__(self):
-        self.WORK_DIR = '/usr/lib/gooroom/gooroomClientServerRegister'
+        #self.WORK_DIR = '/usr/lib/gooroom/gooroomClientServerRegister'
+        self.WORK_DIR = '.'
         self.password_system_types = ['Default', 'Type1', 'Type2']
 
 
@@ -90,6 +91,18 @@ class Registering():
 
         return result_text
 
+    def make_cn(self):
+        """
+        make cn with sn + mac
+        """
+
+        import glob
+        for iface in glob.glob('/sys/class/net/*'):
+            if iface == '/sys/class/net/lo':
+                continue
+            with open(iface+'/address') as f2:
+                return f2.read().strip('\n').replace(':', '')
+        return 'CN-NOT-FOUND-ERROR'
 
 class GUIRegistering(Registering):
     def __init__(self):
@@ -105,13 +118,19 @@ class GUIRegistering(Registering):
         self.window.set_icon_name('gooroom-client-server-register')
 
         self.builder.get_object('label_subtitle1').set_text(_("Register Gooroom Root CA in the client.\nAnd, add gooroom platform management servers from the server."))
-        self.builder.get_object('label_address').set_text(_('Domain'))
+        self.builder.get_object('label_cert_type').set_text(_('How to regist certificate'))
+        self.builder.get_object('radiobutton_create').set_label(_('Create'))
+        self.builder.get_object('radiobutton_update').set_label(_('Update'))
+        self.builder.get_object('radiobutton_create_or_update').set_label(_('Create or Update'))
+        self.builder.get_object('checkbutton_hosts').set_label(_('Record in /etc/hosts'))
+        self.builder.get_object('label_address').set_text(_('GKM'))
         self.builder.get_object('label_path').set_text(_('(Option)Select the certificate path of gooroom root CA'))
         self.builder.get_object('entry_address').set_placeholder_text(_('Enter the domain name'))
         self.builder.get_object('entry_file').set_text('')
         self.builder.get_object('button_browse').set_label(_('browse...'))
         self.builder.get_object('button_register').set_label(_('Register'))
         self.builder.get_object('label_subtitle2').set_text(_('Generate a certificate signing request(CSR) based on the input value\nto receive a certificate from the server.'))
+        self.builder.get_object('label_cn').set_text(_('Client ID'))
         self.builder.get_object('label_name').set_text(_('Client name'))
         self.builder.get_object('label_classify').set_text(_('Client organizational unit'))
         self.builder.get_object('label_password_system_type').set_text(_('Password system type'))
@@ -132,17 +151,144 @@ class GUIRegistering(Registering):
         self.builder.get_object('button_close1').connect('clicked', Gtk.main_quit)
         self.builder.get_object('button_close2').connect('clicked', Gtk.main_quit)
 
+        self.builder.get_object('checkbutton_hosts').connect('toggled', self.on_checkbutton_hosts_toggled)
         combobox_password_system_type = self.builder.get_object('combobox_password_system_type')
         for org in self.password_system_types:
             combobox_password_system_type.append_text(org)
 
         combobox_password_system_type.set_active(0)
 
+        self.builder.get_object('radiobutton_idpw').set_label(_('ID/PW'))
+        self.builder.get_object('radiobutton_idpw').connect('toggled', self.on_radiobutton_idpw_clicked)
+        self.builder.get_object('radiobutton_regkey').set_label(_('REGKEY'))
+        self.builder.get_object('radiobutton_regkey').connect('toggled', self.on_radiobutton_regkey_clicked)
+        self.builder.get_object('label_regkey').set_text(_('REGKEY'))
+
+        self.builder.get_object('entry_cn').set_text(self.make_cn())
+        self.builder.get_object('entry_cn').set_sensitive(False)
+
+        self.builder.get_object('radiobutton_create_or_update').set_sensitive(False)
+
+        #save widget for inserting or removing grid rows when switching idpw and regkey
+        self.label_id = self.builder.get_object('label_id')
+        self.entry_id = self.builder.get_object('entry_id')
+        self.label_password = self.builder.get_object('label_password')
+        self.entry_password = self.builder.get_object('entry_password')
+        self.label_regkey = self.builder.get_object('label_regkey')
+        self.entry_regkey = self.builder.get_object('entry_regkey')
+        self.label_date = self.builder.get_object('label_date')
+        self.entry_date = self.builder.get_object('entry_date')
+        self.builder.get_object('grid2').remove_row(10)
+
+        #save widget for inserting or removing grid rows when switching cert-reg-type
+        self.label_classify = self.builder.get_object('label_classify')
+        self.entry_classify = self.builder.get_object('entry_classify')
+        self.label_name = self.builder.get_object('label_name')
+        self.entry_name = self.builder.get_object('entry_name')
+
         self.window.connect("delete-event", Gtk.main_quit)
         self.window.show_all()
         Gdk.threads_enter()
         Gtk.main()
         Gdk.threads_leave()
+
+    def on_radiobutton_idpw_clicked(self, obj):
+        """
+        """
+
+        if not obj.get_active():
+            return
+
+        grid = self.builder.get_object('grid2')
+        grid.remove_row(7)
+        grid.remove_row(7)
+        grid.remove_row(7)
+        grid.insert_row(7)
+        grid.insert_row(8)
+        grid.insert_row(9)
+        grid.attach(self.label_id, 0, 7, 1, 1)
+        grid.attach(self.entry_id, 1, 7, 1, 1)
+        grid.attach(self.label_password, 0, 8, 1, 1)
+        grid.attach(self.entry_password, 1, 8, 1, 1)
+        grid.attach(self.label_date, 0, 9, 1, 1)
+        grid.attach(self.entry_date, 1, 9, 1, 1)
+        self.window.show_all()
+
+    def on_radiobutton_regkey_clicked(self, obj):
+        """
+        """
+
+        if not obj.get_active():
+            return
+
+        grid = self.builder.get_object('grid2')
+        grid.remove_row(7)
+        grid.remove_row(7)
+        grid.remove_row(7)
+        grid.insert_row(7)
+        grid.insert_row(8)
+        grid.insert_row(9)
+        grid.attach(self.label_regkey, 0, 7, 1, 1)
+        grid.attach(self.entry_regkey, 1, 7, 1, 1)
+        lbl0 = Gtk.Label()
+        lbl1 = Gtk.Label()
+        lbl2 = Gtk.Label()
+        lbl3 = Gtk.Label()
+        grid.attach(lbl0, 0, 8, 1, 1)
+        grid.attach(lbl1, 1, 8, 1, 1)
+        grid.attach(lbl2, 0, 9, 1, 1)
+        grid.attach(lbl3, 1, 9, 1, 1)
+        self.window.show_all()
+
+    def on_checkbutton_hosts_toggled(self, obj):
+        """
+        toggle hosts checkbutton
+        """
+
+        grid = self.builder.get_object('grid_serverinfo')
+        if obj.get_active():
+            gkm_ip = Gtk.Entry()
+            gkm_ip.set_placeholder_text(_('Enter ip address'))
+
+            glm_domain = Gtk.Label()
+            glm_domain.set_text(_('This domain is set on the GPMS'))
+            glm_ip = Gtk.Entry()
+            glm_ip.set_placeholder_text(_('Enter ip address'))
+            glm_label = Gtk.Label()
+            glm_label.set_text(_('GLM'))
+
+            grm_domain = Gtk.Label()
+            grm_domain.set_text(_('This domain is set on the GPMS'))
+            grm_ip = Gtk.Entry()
+            grm_ip.set_placeholder_text(_('Enter ip address'))
+            grm_label = Gtk.Label()
+            grm_label.set_text(_('GRM'))
+
+            gpms_domain = Gtk.Label()
+            gpms_domain.set_text(_('This domain is set on the GPMS'))
+            gpms_ip = Gtk.Entry()
+            gpms_ip.set_placeholder_text(_('Enter ip address'))
+            gpms_label = Gtk.Label()
+            gpms_label.set_text(_('GPMS'))
+
+            grid.attach(gkm_ip, 2, 1, 1 ,1)
+            grid.attach(glm_label, 0, 2, 1 ,1)
+            grid.attach(glm_domain, 1, 2, 1 ,1)
+            grid.attach(glm_ip, 2, 2, 1 ,1)
+            grid.attach(grm_label, 0, 3, 1 ,1)
+            grid.attach(grm_domain, 1, 3, 1 ,1)
+            grid.attach(grm_ip, 2, 3, 1 ,1)
+            grid.attach(gpms_label, 0, 4, 1 ,1)
+            grid.attach(gpms_domain, 1, 4, 1 ,1)
+            grid.attach(gpms_ip, 2, 4, 1 ,1)
+            self.window.show_all()
+        else:
+            grid.remove_row(4)
+            grid.remove_row(3)
+            grid.remove_row(2)
+            grid.remove_column(2)
+            self.window.resize(600, 380)
+            self.window.show_all()
 
     def next_page(self, button):
         "After check empty information, do next page."
@@ -151,6 +297,37 @@ class GUIRegistering(Registering):
             if not self.builder.get_object('entry_address').get_text():
                 self.show_info_dialog(_('Please enter the domain'))
                 return
+            checkbutton_hosts = self.builder.get_object('checkbutton_hosts')
+            if checkbutton_hosts.get_active():
+                grid_serverinfo = self.builder.get_object('grid_serverinfo')
+                gkm_ip = grid_serverinfo.get_child_at(2, 1).get_text()
+                if not gkm_ip:
+                    self.show_info_dialog(_('GKM ip adress must be present'))
+                    return
+
+            grid = self.builder.get_object('grid2')
+            if self.builder.get_object('radiobutton_update').get_active():
+                grid.remove_row(3)
+                grid.remove_row(3)
+                grid.insert_row(3)
+                grid.insert_row(4)
+                lbl0 = Gtk.Label()
+                lbl1 = Gtk.Label()
+                grid.attach(self.label_name, 0, 3, 1, 1)
+                grid.attach(lbl0, 1, 3, 1, 1)
+                grid.attach(self.label_classify, 0, 4, 1, 1)
+                grid.attach(lbl1, 1, 4, 1, 1)
+                self.window.show_all()
+            else:
+                grid.remove_row(3)
+                grid.remove_row(3)
+                grid.insert_row(3)
+                grid.insert_row(4)
+                grid.attach(self.label_name, 0, 3, 1, 1)
+                grid.attach(self.entry_name, 1, 3, 1, 1)
+                grid.attach(self.label_classify, 0, 4, 1, 1)
+                grid.attach(self.entry_classify, 1, 4, 1, 1)
+                self.window.show_all()
 
         elif current_page ==1:
             pass
@@ -196,21 +373,68 @@ class GUIRegistering(Registering):
         register_thread = RegisterThread(datas, self)
         register_thread.start()
 
+    def get_serverinfo(self):
+        """
+        get domain/ip of gkm/glm/grm/gpms for writing to /etc/hosts
+        """
+
+        hosts_data = {}
+
+        checkbutton_hosts = self.builder.get_object('checkbutton_hosts')
+        if checkbutton_hosts.get_active():
+            gkm_domain = self.builder.get_object('entry_address').get_text()
+            grid_serverinfo = self.builder.get_object('grid_serverinfo')
+            gkm_ip = grid_serverinfo.get_child_at(2, 1).get_text()
+
+            glm_domain = grid_serverinfo.get_child_at(1, 2).get_text()
+            glm_ip = grid_serverinfo.get_child_at(2, 2).get_text()
+
+            grm_domain = grid_serverinfo.get_child_at(1, 3).get_text()
+            grm_ip = grid_serverinfo.get_child_at(2, 3).get_text()
+
+            gpms_domain = grid_serverinfo.get_child_at(1, 4).get_text()
+            gpms_ip = grid_serverinfo.get_child_at(2, 4).get_text()
+
+            hosts_data['gkm'] = (gkm_domain,gkm_ip)
+            hosts_data['glm'] = (glm_domain,glm_ip)
+            hosts_data['grm'] = (grm_domain,grm_ip)
+            hosts_data['gpms'] = (gpms_domain,gpms_ip)
+
+        return hosts_data
+
     def get_datas(self):
         "Return input information. notebook page 0 and 1"
         server_data = {}
         server_data['domain'] = self.builder.get_object('entry_address').get_text()
         server_data['path'] = self.builder.get_object('entry_file').get_text()
+        server_data['serverinfo'] = self.get_serverinfo()
         yield server_data
 
         client_data = {}
-        client_data['cn'] = self.builder.get_object('entry_name').get_text()
+        client_data['cn'] = self.builder.get_object('entry_cn').get_text()
+        client_data['name'] = self.builder.get_object('entry_name').get_text()
         client_data['ou'] = self.builder.get_object('entry_classify').get_text()
         client_data['password_system_type'] = self.builder.get_object('combobox_password_system_type').get_active_text()
         client_data['user_id'] = self.builder.get_object('entry_id').get_text()
         client_data['user_pw'] = self.builder.get_object('entry_password').get_text()
         client_data['valid_date'] = self.builder.get_object('entry_date').get_text()
         client_data['comment'] = self.builder.get_object('entry_comment').get_text()
+
+        client_data['regkey'] = self.builder.get_object('entry_regkey').get_text()
+        if self.builder.get_object('radiobutton_idpw').get_active():
+            api_type = 'id/pw'
+        else:
+            api_type = 'regkey'
+        client_data['api_type'] = api_type
+        client_data['regkey'] = self.builder.get_object('entry_regkey').get_text()
+
+        if self.builder.get_object('radiobutton_create').get_active():
+            cert_reg_type = '0'
+        elif self.builder.get_object('radiobutton_update').get_active():
+            cert_reg_type = '1'
+        else:
+            cert_reg_type = '2'
+        client_data['cert_reg_type'] = cert_reg_type
         yield client_data
 
     def show_info_dialog(self, message, error=None):
@@ -253,11 +477,39 @@ class ShellRegistering(Registering):
         yield server_data
 
         client_data = {}
-        client_data['cn'] = self.input_surely(_('Enter the client name: '))
-        client_data['ou'] = self.input_surely(_('Enter the organizational unit: '))
+        while True:
+            cert_reg_type = self.input_surely(_('Enter certificate registration type[0:create 1:update 2: create or update]: '))
+            if cert_reg_type != '0' and cert_reg_type != '1' and cert_reg_type != '2':
+                continue
+            break
+        client_data['cert_reg_type'] = cert_reg_type
+
+        #client_data['cn'] = self.input_surely(_('Enter the Client ID: '))
+        client_data['cn'] = self.make_cn()
+
+        if cert_reg_type == '1':
+            client_data['name'] = ''
+            client_data['ou'] = ''
+        else:
+            client_data['name'] = self.input_surely(_('Enter the client name: '))
+            client_data['ou'] = self.input_surely(_('Enter the organizational unit: '))
+
+        while True:
+            api_type = self.input_surely(_('Enter the authentication type[0:id/password 1:regkey]: '))
+            if api_type != '0' and api_type != '1':
+                continue
+            break
+
+        if api_type == '0':
+            api_type = 'id/pw'
+            client_data['user_id'] = self.input_surely(_('Enter the gooroom admin ID: '))
+            client_data['user_pw'] = getpass.getpass(_('Enter the password: '))
+        else:
+            api_type = 'regkey'
+            client_data['regkey'] = self.input_surely(_('Enter the registration key: '))
+        client_data['api_type'] = api_type
+
         client_data['password_system_type'] = self.input_password_system_type(_('Enter the password system type[Default]: '))
-        client_data['user_id'] = self.input_surely(_('Enter the gooroom admin ID: '))
-        client_data['user_pw'] = getpass.getpass(_('Enter the password: '))
         client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
         client_data['comment'] = input(_('(Option)Enter the comment: '))
         yield client_data
@@ -275,6 +527,9 @@ class ShellRegistering(Registering):
 
             server_data = {'domain':args.domain, 'path':args.CAfile}
 
+        elif args.cmd == 'noninteractive-regkey':
+            server_data = {'domain':args.domain, 'path':args.CAfile}
+
         server_certification = certification.ServerCertification()
         sc = server_certification.certificate(server_data)
         for result in sc:
@@ -290,13 +545,28 @@ class ShellRegistering(Registering):
             client_data = next(datas)
         elif args.cmd == 'noninteractive':
             client_data = {}
-            client_data['cn'] = args.name
+            client_data['cn'] = self.make_cn()
+            client_data['name'] = args.name
             client_data['ou'] = args.unit
             client_data['password_system_type'] = args.password_system_type
             client_data['user_id'] = args.id
             client_data['user_pw'] = args.password
             client_data['valid_date'] = args.expiration_date
             client_data['comment'] = args.comment
+            client_data['api_type'] = 'id/pw'
+            client_data['cert_reg_type'] = args.cert_reg_type
+        elif args.cmd == 'noninteractive-regkey':
+            client_data = {}
+            client_data['cn'] = self.make_cn()
+            #client_data['name'] = self.make_name()
+            client_data['name'] = args.name
+            client_data['ou'] = args.unit
+            client_data['password_system_type'] = args.password_system_type
+            client_data['valid_date'] = args.expiration_date
+            client_data['comment'] = args.comment
+            client_data['regkey'] = args.regkey
+            client_data['api_type'] = 'regkey'
+            client_data['cert_reg_type'] = args.cert_reg_type
 
         client_certification = certification.ClientCertification(server_data['domain'])
         cc = client_certification.certificate(client_data)
@@ -308,3 +578,11 @@ class ShellRegistering(Registering):
                 exit(1)
 
             print(result_text)
+
+    def make_name(self):
+        """
+        make name with hostname@ip
+        """
+
+        import socket
+        return socket.gethostname()
