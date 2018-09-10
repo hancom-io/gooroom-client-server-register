@@ -106,7 +106,7 @@ class ServerCertification(Certification):
 
         try:
             self.result['log'] = [(_('Getting list of Gooroom platform management server...'))]
-            self._add_hosts(data['domain'], serverinfo)
+            self._add_hosts(data, serverinfo)
             self.result['log'].append(_('List of Gooroom platform management server registration completed.'))
         except (OSError, requests.exceptions.ConnectionError, socket.timeout) as error:
             self.result['err'] = '102'
@@ -234,6 +234,7 @@ class ServerCertification(Certification):
         """
 
         ######write gkm on /etc/hosts
+        print('SARABAL serverinfo={}'.format(serverinfo))
         if serverinfo:
             with open('/etc/hosts', 'r') as f:
                 lines = f.readlines()
@@ -246,10 +247,12 @@ class ServerCertification(Certification):
             with open('/etc/hosts', 'w') as f:
                 f.write(hosts)
 
-    def _add_hosts(self, domain, serverinfo):
+    def _add_hosts(self, data, serverinfo):
         """Get server list and /etc/hosts file from server.
         write /etc/hosts
         write config"""
+
+        domain = data['domain']
 
         #####request glm/grm/gpms infos
         url = 'https://%s/gkm/v1/gpms' % domain
@@ -264,6 +267,18 @@ class ServerCertification(Certification):
 
         #####write config
         self._add_config(gpms)
+
+        #SARABAL
+        #####support server version
+        if data['server_version'] == 1.0 and not serverinfo:
+            v1_urls = [x for x in gpms if x.endswith('Url')]
+            for v1_url in v1_urls:
+                n = v1_url.replace('Url', '')
+                i = gpms[n + 'Ip']
+                d = gpms[v1_url]
+                serverinfo[n] = (d, i)
+
+            print('SARABAL v1 serverinfo={}'.format(serverinfo))
 
         #####write gkm/glm/grm/gpms on /etc/hosts (again)
         hosts = self._read_hosts_except_gen()
@@ -343,23 +358,28 @@ class ClientCertification(Certification):
         csr, private_key, public_key = self.generate_csr(data['cn'], data['ou'])
         data['csr'] = csr
 
-        cert_reg_type = data['cert_reg_type']
-        if api_type == 'id/pw':
-            if cert_reg_type == '0':
-                url = 'https://%s/gkm/v1/client/register/idpw/create' % self.domain
-            elif cert_reg_type == '1':
-                url = 'https://%s/gkm/v1/client/register/idpw/update' % self.domain
-            else:
-                url = 'https://%s/gkm/v1/client/register/idpw/create_or_update' % self.domain
+        if data['server_version'] == 1.0:
+            url = 'https://%s/gkm/v1/client/register' % self.domain
             data['user_pw'] = self.hash_password(id=data['user_id'],
                                                  password=data['user_pw'])
-        elif api_type == 'regkey':
-            if cert_reg_type == '0':
-                url = 'https://%s/gkm/v1/client/register/regkey/create' % self.domain
-            elif cert_reg_type == '1':
-                url = 'https://%s/gkm/v1/client/register/regkey/update' % self.domain
-            else:
-                url = 'https://%s/gkm/v1/client/register/regkey/create_or_update' % self.domain
+        else:
+            cert_reg_type = data['cert_reg_type']
+            if api_type == 'id/pw':
+                if cert_reg_type == '0':
+                    url = 'https://%s/gkm/v1/client/register/idpw/create' % self.domain
+                elif cert_reg_type == '1':
+                    url = 'https://%s/gkm/v1/client/register/idpw/update' % self.domain
+                else:
+                    url = 'https://%s/gkm/v1/client/register/idpw/create_or_update' % self.domain
+                data['user_pw'] = self.hash_password(id=data['user_id'],
+                                                     password=data['user_pw'])
+            elif api_type == 'regkey':
+                if cert_reg_type == '0':
+                    url = 'https://%s/gkm/v1/client/register/regkey/create' % self.domain
+                elif cert_reg_type == '1':
+                    url = 'https://%s/gkm/v1/client/register/regkey/update' % self.domain
+                else:
+                    url = 'https://%s/gkm/v1/client/register/regkey/create_or_update' % self.domain
 
         self.result['log'] = []
 

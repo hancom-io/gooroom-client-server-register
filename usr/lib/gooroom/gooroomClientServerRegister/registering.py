@@ -77,10 +77,10 @@ class RegisterThread(threading.Thread):
 class Registering():
     "Registering parent class"
     def __init__(self):
-        #self.WORK_DIR = '/usr/lib/gooroom/gooroomClientServerRegister'
-        self.WORK_DIR = '.'
+        self.WORK_DIR = '/usr/lib/gooroom/gooroomClientServerRegister'
         self.password_system_types = ['Default', 'Type1', 'Type2']
-
+        #VERSIONING
+        self.server_version = None
 
     def result_format(self, result):
         "Return result log pretty"
@@ -291,6 +291,14 @@ class GUIRegistering(Registering):
             self.window.show_all()
 
     def next_page(self, button):
+        #VERSIONING
+        #get server version
+        try:
+            if not self.server_version:
+                self.server_version = 1.1
+        except:
+            self.server_version = 1.0
+
         "After check empty information, do next page."
         current_page = self.builder.get_object('notebook').get_current_page()
         if current_page == 0:
@@ -304,6 +312,13 @@ class GUIRegistering(Registering):
                 if not gkm_ip:
                     self.show_info_dialog(_('GKM ip adress must be present'))
                     return
+
+            #VERSIONING
+            if self.server_version == 1.0:
+                self.builder.get_object('radiobutton_regkey').set_sensitive(False)
+                self.builder.get_object('entry_cn').set_text('')
+                self.builder.get_object('entry_cn').set_sensitive(True)
+                self.builder.get_object('entry_name').set_sensitive(False)
 
             grid = self.builder.get_object('grid2')
             if self.builder.get_object('radiobutton_update').get_active():
@@ -408,6 +423,7 @@ class GUIRegistering(Registering):
         server_data['domain'] = self.builder.get_object('entry_address').get_text()
         server_data['path'] = self.builder.get_object('entry_file').get_text()
         server_data['serverinfo'] = self.get_serverinfo()
+        server_data['server_version'] = self.server_version
         yield server_data
 
         client_data = {}
@@ -435,6 +451,8 @@ class GUIRegistering(Registering):
         else:
             cert_reg_type = '2'
         client_data['cert_reg_type'] = cert_reg_type
+        #VERSIONING
+        client_data['server_version'] = self.server_version
         yield client_data
 
     def show_info_dialog(self, message, error=None):
@@ -531,6 +549,8 @@ class ShellRegistering(Registering):
             server_data = {'domain':args.domain, 'path':args.CAfile}
 
         server_certification = certification.ServerCertification()
+        #VERSIONING
+        server_data['server_version'] = 1.1
         sc = server_certification.certificate(server_data)
         for result in sc:
             result_text = self.result_format(result['log'])
@@ -569,6 +589,8 @@ class ShellRegistering(Registering):
             client_data['cert_reg_type'] = args.cert_reg_type
 
         client_certification = certification.ClientCertification(server_data['domain'])
+        #VERSIONING
+        client_data['server_version'] = 1.1
         cc = client_certification.certificate(client_data)
         for result in cc:
             result_text = self.result_format(result['log'])
@@ -586,3 +608,97 @@ class ShellRegistering(Registering):
 
         import socket
         return socket.gethostname()
+
+class ShellRegisteringV1_0(Registering):
+
+    def __init__(self):
+        Registering.__init__(self)
+
+    def input_surely(self, prompt):
+        user_input = ''
+        while not user_input:
+            user_input = input(prompt)
+
+        return user_input
+
+    def input_password_system_type(self, prompt):
+        user_input = ''
+        while user_input not in self.password_system_types:
+            user_input = input(prompt) or 'Default'
+
+        return user_input
+
+    def cli(self):
+        'Get request info from keyboard using cli'
+        print(_('Gooroom Client Server Register.\n'))
+        server_data = {}
+        server_data['domain'] = self.input_surely(_('Enter the domain name: '))
+        server_data['path'] = input(_('(Option)Enter the certificate path of gooroom root CA: '))
+        yield server_data
+
+        client_data = {}
+        client_data['cn'] = self.input_surely(_('Enter the client name: '))
+        client_data['ou'] = self.input_surely(_('Enter the organizational unit: '))
+        client_data['password_system_type'] = self.input_password_system_type(_('Enter the password system type[Default]: '))
+        client_data['user_id'] = self.input_surely(_('Enter the gooroom admin ID: '))
+        client_data['user_pw'] = getpass.getpass(_('Enter the password: '))
+        client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
+        client_data['comment'] = input(_('(Option)Enter the comment: '))
+        #1_0
+        client_data['api_type'] = 'id/pw'
+        client_data['cert_reg_type'] = '0'
+        yield client_data
+
+    def run(self, args):
+        if args.cmd == 'cli':
+            datas = self.cli()
+            server_data = next(datas)
+
+        elif args.cmd == 'noninteractive':
+            if args.password_system_type not in self.password_system_types:
+                print('###########ERROR(101)###########')
+                print(_('Check the password system type!'))
+                exit(101)
+
+            server_data = {'domain':args.domain, 'path':args.CAfile}
+
+        server_certification = certification.ServerCertification()
+        #1_0
+        server_data['server_version'] = 1.0
+        sc = server_certification.certificate(server_data)
+        for result in sc:
+            result_text = self.result_format(result['log'])
+            if result['err']:
+                print("###########ERROR(%s)###########" % result['err'])
+                print(result_text)
+                exit(result['err'])
+
+            print(result_text)
+
+        if args.cmd == 'cli':
+            client_data = next(datas)
+        elif args.cmd == 'noninteractive':
+            client_data = {}
+            client_data['cn'] = args.cn
+            client_data['ou'] = args.unit
+            client_data['password_system_type'] = args.password_system_type
+            client_data['user_id'] = args.id
+            client_data['user_pw'] = args.password
+            client_data['valid_date'] = args.expiration_date
+            client_data['comment'] = args.comment
+            #1_0
+            client_data['api_type'] = 'id/pw'
+            client_data['cert_reg_type'] = '0'
+
+        client_certification = certification.ClientCertification(server_data['domain'])
+        #1_0
+        client_data['server_version'] = 1.0
+        cc = client_certification.certificate(client_data)
+        for result in cc:
+            result_text = self.result_format(result['log'])
+            if result['err']:
+                print("###########ERROR(%s)###########" % result['err'])
+                print(result_text)
+                exit(1)
+
+            print(result_text)

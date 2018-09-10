@@ -7,7 +7,17 @@ import registering
 
 gettext.install('gooroom-client-server-register', '/usr/share/gooroom/locale')
 
-example = """ex)gooroom-client-server-register noninteractive -d gkm.gooroom.kr
+example_v1 = """ex v1.0)gooroom-client-server-register noninteractive -d gkm.gooroom.kr
+                                                 [-C /usr/local/share/ca-certificates/server.crt]
+                                                  -n client003 -u gooroom
+                                                  -u gooroom
+                                                 [-t Default]
+                                                  -i admin_id
+                                                  -p admin_password
+                                                 [-e 2020-01-01]
+                                                 [-c 2F ooo]"""
+
+example = """ex v1.1)gooroom-client-server-register noninteractive -d gkm.gooroom.kr
                                             [-C /usr/local/share/ca-certificates/server.crt]
                                             [ -r 2] #0:create 1:update 2:create or update
                                              -m name
@@ -18,7 +28,7 @@ example = """ex)gooroom-client-server-register noninteractive -d gkm.gooroom.kr
                                             [-e 2020-01-01]
                                             [-c 2F ooo]"""
 
-example_regkey = """ex)gooroom-client-server-register noninteractive-regkey -d gkm.gooroom.kr
+example_regkey = """ex v1.1)gooroom-client-server-register noninteractive-regkey -d gkm.gooroom.kr
                                             [-C /usr/local/share/ca-certificates/server.crt]
                                             [ -r 2] #0:create 1:update 2:create or update
                                              -m name
@@ -30,6 +40,8 @@ example_regkey = """ex)gooroom-client-server-register noninteractive-regkey -d g
 def usage():
     print('ex)gooroom-client-server-register gui\n')
     print('ex)gooroom-client-server-register cli\n')
+    print(example_v1)
+    print('\n')
     print(example)
     print('\n')
     print(example_regkey)
@@ -50,8 +62,8 @@ def argument_parser():
     ni_help = subparsers.add_parser('noninteractive --help', help=_('Print help on the noninteractive command'))
     ni_parser.add_argument('-d', '--domain', required=True, help=_('Key management server hostname'))
     ni_parser.add_argument('-C', '--CAfile', help=_('(Option)PEM format file of gooroom root CA certificate'), nargs='?')
-    #ni_parser.add_argument('-n', '--cn', required=True, help=_('Unique CN to use for the client certificate'))
-    ni_parser.add_argument('-m', '--name', required=True, help=_('Client name to distinguish from others'))
+    ni_parser.add_argument('-n', '--cn', help=_('Unique CN to use for the client certificate'))
+    ni_parser.add_argument('-m', '--name', help=_('Client name to distinguish from others'))
     ni_parser.add_argument('-u', '--unit', required=True, help=_('Client organizational unit to use for the client certificate'))
     ni_parser.add_argument('-t', '--password-system-type', help=_('Password system type to use for the password hashing.'), default='Default', nargs='?')
     ni_parser.add_argument('-i', '--id', help=_('GPMS admin ID'))
@@ -91,5 +103,13 @@ if __name__ == '__main__':
     if args.cmd == 'gui':
         registering.GUIRegistering()
     else:
-        shell_register = registering.ShellRegistering()
+        try:
+            server_version = 1.1
+        except:
+            server_version = 1.0
+
+        if server_version == 1.0:
+            shell_register = registering.ShellRegisteringV1_0()
+        else:
+            shell_register = registering.ShellRegistering()
         shell_register.run(args)
