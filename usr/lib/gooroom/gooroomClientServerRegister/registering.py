@@ -13,7 +13,7 @@ gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk, Gtk
 
 import certification
-
+from gcsr_define import *
 
 gettext.install("gooroom-client-server-register", "/usr/share/gooroom/locale")
 
@@ -295,9 +295,10 @@ class GUIRegistering(Registering):
         #get server version
         try:
             if not self.server_version:
-                self.server_version = 1.1
+                #self.server_version = SERVER_VERSION_NOT_1_0
+                self.server_version = SERVER_VERSION_1_0
         except:
-            self.server_version = 1.0
+            self.server_version = SERVER_VERSION_1_0
 
         "After check empty information, do next page."
         current_page = self.builder.get_object('notebook').get_current_page()
@@ -314,7 +315,7 @@ class GUIRegistering(Registering):
                     return
 
             #VERSIONING
-            if self.server_version == 1.0:
+            if self.server_version == SERVER_VERSION_1_0:
                 self.builder.get_object('radiobutton_regkey').set_sensitive(False)
                 self.builder.get_object('entry_cn').set_text('')
                 self.builder.get_object('entry_cn').set_sensitive(True)
@@ -550,7 +551,7 @@ class ShellRegistering(Registering):
 
         server_certification = certification.ServerCertification()
         #VERSIONING
-        server_data['server_version'] = 1.1
+        server_data['server_version'] = SERVER_VERSION_NOT_1_0
         sc = server_certification.certificate(server_data)
         for result in sc:
             result_text = self.result_format(result['log'])
@@ -590,7 +591,7 @@ class ShellRegistering(Registering):
 
         client_certification = certification.ClientCertification(server_data['domain'])
         #VERSIONING
-        client_data['server_version'] = 1.1
+        client_data['server_version'] = SERVER_VERSION_NOT_1_0
         cc = client_certification.certificate(client_data)
         for result in cc:
             result_text = self.result_format(result['log'])
@@ -664,7 +665,7 @@ class ShellRegisteringV1_0(Registering):
 
         server_certification = certification.ServerCertification()
         #1_0
-        server_data['server_version'] = 1.0
+        server_data['server_version'] = SERVER_VERSION_1_0
         sc = server_certification.certificate(server_data)
         for result in sc:
             result_text = self.result_format(result['log'])
@@ -692,7 +693,7 @@ class ShellRegisteringV1_0(Registering):
 
         client_certification = certification.ClientCertification(server_data['domain'])
         #1_0
-        client_data['server_version'] = 1.0
+        client_data['server_version'] = SERVER_VERSION_1_0
         cc = client_certification.certificate(client_data)
         for result in cc:
             result_text = self.result_format(result['log'])

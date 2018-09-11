@@ -13,6 +13,7 @@ import socket
 import subprocess
 import time
 from datetime import datetime
+from gcsr_define import *
 
 import OpenSSL
 import requests
@@ -270,7 +271,7 @@ class ServerCertification(Certification):
 
         #SARABAL
         #####support server version
-        if data['server_version'] == 1.0 and not serverinfo:
+        if data['server_version'] == SERVER_VERSION_1_0 and not serverinfo:
             v1_urls = [x for x in gpms if x.endswith('Url')]
             for v1_url in v1_urls:
                 n = v1_url.replace('Url', '')
@@ -358,7 +359,7 @@ class ClientCertification(Certification):
         csr, private_key, public_key = self.generate_csr(data['cn'], data['ou'])
         data['csr'] = csr
 
-        if data['server_version'] == 1.0:
+        if data['server_version'] == SERVER_VERSION_1_0:
             url = 'https://%s/gkm/v1/client/register' % self.domain
             data['user_pw'] = self.hash_password(id=data['user_id'],
                                                  password=data['user_pw'])
