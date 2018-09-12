@@ -148,9 +148,13 @@ class ServerCertification(Certification):
             shutil.copy(local_crt_path, self.root_crt_path)
         else:
             # get root certificate from gooroom key server certificate chain
+            if ':' in domain:
+                port = int(domain.strip('\n').split(':')[-1])
+            else:
+                port = 443
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(5)
-            s.connect((domain, 443))
+            s.connect((domain, port))
 
             ssl_context = OpenSSL.SSL.Context(OpenSSL.SSL.TLSv1_2_METHOD)
             ssl_conn = OpenSSL.SSL.Connection(ssl_context, s)

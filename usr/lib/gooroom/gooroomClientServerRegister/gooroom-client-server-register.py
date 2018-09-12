@@ -105,12 +105,9 @@ if __name__ == '__main__':
     if args.cmd == 'gui':
         registering.GUIRegistering()
     else:
-        try:
-            server_version = SERVER_VERSION_NOT_1_0
-        except:
-            server_version = SERVER_VERSION_1_0
+        server_version = registering.Registering.request_server_version(args.domain)
 
-        if server_version == SERVER_VERSION_1_0:
+        if server_version.startswith(SERVER_VERSION_1_0):
             shell_register = registering.ShellRegisteringV1_0()
         else:
             shell_register = registering.ShellRegistering()

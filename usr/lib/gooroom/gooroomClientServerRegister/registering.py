@@ -104,6 +104,29 @@ class Registering():
                 return f2.read().strip('\n').replace(':', '')
         return 'CN-NOT-FOUND-ERROR'
 
+    @classmethod
+    def request_server_version(cls, domain):
+        """
+        get server-version from gkm
+        """
+
+        try:
+            import requests
+            response = requests.get('https://{}/gkm/v2/version'.format(domain))
+            if response.status_code != 200:
+                raise Exception('!! https status={}'.format(response.status_code))
+            resp_data = response.json()
+            if resp_data['status']['result'] != 'success':
+                raise Exception('!! gkm status is failure={}'.format(resp_data))
+
+            server_version = resp_data['data']['version']
+        except:
+            import traceback
+            print(traceback.format_exc())
+            server_version = SERVER_VERSION_1_0
+
+        return server_version
+
 class GUIRegistering(Registering):
     def __init__(self):
         Registering.__init__(self)
@@ -291,15 +314,6 @@ class GUIRegistering(Registering):
             self.window.show_all()
 
     def next_page(self, button):
-        #VERSIONING
-        #get server version
-        try:
-            if not self.server_version:
-                #self.server_version = SERVER_VERSION_NOT_1_0
-                self.server_version = SERVER_VERSION_1_0
-        except:
-            self.server_version = SERVER_VERSION_1_0
-
         "After check empty information, do next page."
         current_page = self.builder.get_object('notebook').get_current_page()
         if current_page == 0:
@@ -313,6 +327,14 @@ class GUIRegistering(Registering):
                 if not gkm_ip:
                     self.show_info_dialog(_('GKM ip adress must be present'))
                     return
+
+            #get server version
+            domain = self.builder.get_object('entry_address').get_text()
+            server_version = Registering.request_server_version(domain)
+            if server_version.startswith(SERVER_VERSION_1_0):
+                self.server_version = SERVER_VERSION_1_0
+            else:
+                self.server_version = SERVER_VERSION_NOT_1_0
 
             #VERSIONING
             if self.server_version == SERVER_VERSION_1_0:
