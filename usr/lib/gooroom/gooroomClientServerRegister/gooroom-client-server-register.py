@@ -39,6 +39,10 @@ example_regkey = """>v1.0)gooroom-client-server-register noninteractive-regkey -
                                              -k registration key
                                             [-e 2020-01-01]
                                             [-c 2F ooo]"""
+
+autoregisteration_help ="""To automatically register your client to Gooroom Platform Management Server(GPMS) on boot,
+                           configure “/etc/gooroom/gooroom-client-server-register/gcsr_auto.conf” accordingly."""
+
 def usage():
     print('ex)gooroom-client-server-register gui\n')
     print('ex)gooroom-client-server-register cli\n')
@@ -47,6 +51,8 @@ def usage():
     print(example)
     print('\n')
     print(example_regkey)
+    print('\n')
+    print(autoregisteration_help)
 
 def argument_parser():
     parser = argparse.ArgumentParser(description=_('Register certificate of gooroom root CA & gooroom platform management server'))
