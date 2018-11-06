@@ -119,7 +119,7 @@ class Registering():
             if resp_data['status']['result'] != 'success':
                 raise Exception('!! gkm status is failure={}'.format(resp_data))
 
-            server_version = resp_data['data']['version']
+            server_version = resp_data['data'][0]['version']
         except:
             import traceback
             print(traceback.format_exc())
