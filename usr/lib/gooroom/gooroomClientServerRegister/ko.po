@@ -55,8 +55,8 @@ msgid "(Option)PEM format file of gooroom root CA certificate"
 msgstr "(옵션)구름 루트 CA 인증서의 PEM 형식 파일"
 
 #: gooroom-client-server-register.py:54 gooroom-client-server-register.py:69
-msgid "Client name to distinguish from others"
-msgstr "다른 단말과 구별되는 단말명"
+msgid "(Option)Client name to distinguish from others:defaut=ip"
+msgstr "(옵션)다른 단말과 구별되는 단말명:기본값=아이피"
 
 #: gooroom-client-server-register.py:55 gooroom-client-server-register.py:70
 msgid "Client organizational unit to use for the client certificate"
@@ -277,8 +277,8 @@ msgid ""
 msgstr "인증서 등록 타입을 입력하세요[0:생성 1:갱신 2:생성 혹은 갱신]: "
 
 #: registering.py:494
-msgid "Enter the client name: "
-msgstr "단말 이름을 입력하세요: "
+msgid "Enter the client name"
+msgstr "단말 이름을 입력하세요"
 
 #: registering.py:495
 msgid "Enter the organizational unit: "

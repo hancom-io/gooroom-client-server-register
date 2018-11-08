@@ -22,7 +22,7 @@ example_v1 = """v1.0)gooroom-client-server-register noninteractive -d gkm.gooroo
 example = """>v1.0)gooroom-client-server-register noninteractive -d gkm.gooroom.kr
                                             [-C /usr/local/share/ca-certificates/server.crt]
                                             [ -r 2] #0:create 1:update 2:create or update
-                                             -m name
+                                            [ -m ipaddress]
                                              -u gooroom
                                             [-t Default]
                                              -i admin_id
@@ -33,7 +33,7 @@ example = """>v1.0)gooroom-client-server-register noninteractive -d gkm.gooroom.
 example_regkey = """>v1.0)gooroom-client-server-register noninteractive-regkey -d gkm.gooroom.kr
                                             [-C /usr/local/share/ca-certificates/server.crt]
                                             [ -r 2] #0:create 1:update 2:create or update
-                                             -m name
+                                            [ -m ipaddress]
                                              -u gooroom
                                             [-t Default]
                                              -k registration key
@@ -55,6 +55,7 @@ def usage():
     print(autoregisteration_help)
 
 def argument_parser():
+    clientip = os.popen('hostname --all-ip-addresses').read().split(' ')[0]
     parser = argparse.ArgumentParser(description=_('Register certificate of gooroom root CA & gooroom platform management server'))
     #parser.add_argument('-h', '--help', help=_('show this help message and exit'))
     #parser.add_argument('--help noninteractive', help=_('Show help on the noninteractive command'))
@@ -71,7 +72,7 @@ def argument_parser():
     ni_parser.add_argument('-d', '--domain', required=True, help=_('Key management server hostname'))
     ni_parser.add_argument('-C', '--CAfile', help=_('(Option)PEM format file of gooroom root CA certificate'), nargs='?')
     ni_parser.add_argument('-n', '--cn', help=_('Unique CN to use for the client certificate'))
-    ni_parser.add_argument('-m', '--name', help=_('Client name to distinguish from others'))
+    ni_parser.add_argument('-m', '--name', help=_('(Option)Client name to distinguish from others:default=ip'), default=clientip)
     ni_parser.add_argument('-u', '--unit', required=True, help=_('Client organizational unit to use for the client certificate'))
     ni_parser.add_argument('-t', '--password-system-type', help=_('Password system type to use for the password hashing.'), default='Default', nargs='?')
     ni_parser.add_argument('-i', '--id', help=_('GPMS admin ID'))
@@ -86,7 +87,7 @@ def argument_parser():
     ni_regkey_help = subparsers.add_parser('noninteractive-regkey --help', help=_('Print help on the noninteractive-regkey command'))
     ni_regkey_parser.add_argument('-d', '--domain', required=True, help=_('Key management server hostname'))
     ni_regkey_parser.add_argument('-C', '--CAfile', help=_('(Option)PEM format file of gooroom root CA certificate'), nargs='?')
-    ni_regkey_parser.add_argument('-m', '--name', required=True, help=_('Client name to distinguish from others'))
+    ni_regkey_parser.add_argument('-m', '--name', help=_('Option)Client name to distinguish from others:default=ip'), default=clientip)
     ni_regkey_parser.add_argument('-u', '--unit', required=True, help=_('Client organizational unit to use for the client certificate'))
     ni_regkey_parser.add_argument('-t', '--password-system-type', help=_('Password system type to use for the password hashing.'), default='Default', nargs='?')
     ni_regkey_parser.add_argument('-e', '--expiration-date', help=_('(Option)Certificates expiration date(format:YYYY-MM-DD)'), default='', nargs='?')
@@ -111,10 +112,5 @@ if __name__ == '__main__':
     if args.cmd == 'gui':
         registering.GUIRegistering()
     else:
-        server_version = registering.Registering.request_server_version(args.domain)
-
-        if server_version.startswith(SERVER_VERSION_1_0):
-            shell_register = registering.ShellRegisteringV1_0()
-        else:
-            shell_register = registering.ShellRegistering()
+        shell_register = registering.ShellRegistering()
         shell_register.run(args)

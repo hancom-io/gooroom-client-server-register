@@ -89,8 +89,8 @@ class ServerCertification(Certification):
 
         try:
             self.result['log'] = [(_('Getting certificate of gooroom root CA...'))]
-            self._add_hosts_gkm(serverinfo)
-            self.get_root_certificate(data)
+            #self.add_hosts_gkm(serverinfo)
+            #self.get_root_certificate(data)
             self.result['log'].append(_('Server registration completed.'))
         except (ConnectionRefusedError, socket.gaierror) as error:
             self.result['err'] = '102'
@@ -181,7 +181,6 @@ class ServerCertification(Certification):
                 with open(self.root_crt_path) as f0:
                     old_crt = f0.read()
                     if old_crt == root_crt.decode('utf8'):
-                        print('SARABAL root cert exists')
                         return
 
             self.remove_file(self.root_crt_path)
@@ -233,13 +232,12 @@ class ServerCertification(Certification):
 
         self._save_config(section='domain', section_data=domain_datas)
 
-    def _add_hosts_gkm(self, serverinfo):
+    def add_hosts_gkm(self, serverinfo):
         """
         add gkm info to /etc/hosts
         """
 
         ######write gkm on /etc/hosts
-        print('SARABAL serverinfo={}'.format(serverinfo))
         if serverinfo:
             with open('/etc/hosts', 'r') as f:
                 lines = f.readlines()
@@ -273,7 +271,6 @@ class ServerCertification(Certification):
         #####write config
         self._add_config(gpms)
 
-        #SARABAL
         #####support server version
         if data['server_version'] == SERVER_VERSION_1_0 and not serverinfo:
             v1_urls = [x for x in gpms if x.endswith('Url')]
@@ -282,8 +279,6 @@ class ServerCertification(Certification):
                 i = gpms[n + 'Ip']
                 d = gpms[v1_url]
                 serverinfo[n] = (d, i)
-
-            print('SARABAL v1 serverinfo={}'.format(serverinfo))
 
         #####write gkm/glm/grm/gpms on /etc/hosts (again)
         hosts = self._read_hosts_except_gen()
@@ -389,7 +384,7 @@ class ClientCertification(Certification):
         self.result['log'] = []
 
         try:
-            print('SARABAL REQUEST url={} data={}'.format(url, data))
+            print(data)
             res = requests.post(url, data=data, timeout=30)
             response_data = self.response(res)
             # save crt
@@ -430,7 +425,6 @@ class ClientCertification(Certification):
                 OpenSSL.crypto.FILETYPE_PEM, key)
             self.__save_key(private_key, self.client_key)
             obj_private_key = obj_public_key = key
-            print('SARABAL public-key NO')
         else:
             with open(self.public_key_path) as f:
                 public_key = f.read().encode('utf8')
@@ -438,7 +432,6 @@ class ClientCertification(Certification):
             with open(self.client_key) as f2:
                 private_key = f2.read().encode('utf8')
                 obj_private_key = OpenSSL.crypto.load_privatekey(OpenSSL.crypto.FILETYPE_PEM, private_key)
-            print('SARABAL public-key YES')
 
         return obj_private_key, private_key, public_key, obj_public_key
 

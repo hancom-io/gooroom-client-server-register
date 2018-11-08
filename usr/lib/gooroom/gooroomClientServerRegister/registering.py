@@ -35,7 +35,7 @@ class RegisterThread(threading.Thread):
         try:
             textbuffer = self.application.builder.get_object('textbuffer_result')
             client_data = next(self.datas)
-            server_certification = certification.ServerCertification()
+            server_certification = self.application.server_certification
             sc = server_certification.certificate(client_data)
             for server_result in sc:
                 result_text = self.result_format(server_result['log'])
@@ -104,6 +104,12 @@ class Registering():
                 return f2.read().strip('\n').replace(':', '')
         return 'CN-NOT-FOUND-ERROR'
 
+    def make_ipname(self):
+        """
+        make name with IP
+        """
+        return os.popen('hostname --all-ip-addresses').read().split(' ')[0]
+
     @classmethod
     def request_server_version(cls, domain):
         """
@@ -112,7 +118,7 @@ class Registering():
 
         try:
             import requests
-            response = requests.get('https://{}/gkm/v2/version'.format(domain))
+            response = requests.get('https://{}/gkm/v2/version'.format(domain), verify=False)
             if response.status_code != 200:
                 raise Exception('!! https status={}'.format(response.status_code))
             resp_data = response.json()
@@ -155,6 +161,8 @@ class GUIRegistering(Registering):
         self.builder.get_object('label_subtitle2').set_text(_('Generate a certificate signing request(CSR) based on the input value\nto receive a certificate from the server.'))
         self.builder.get_object('label_cn').set_text(_('Client ID'))
         self.builder.get_object('label_name').set_text(_('Client name'))
+        self.builder.get_object('entry_name').set_placeholder_text(self.make_ipname())
+        self.builder.get_object('entry_name').set_text(self.make_ipname())
         self.builder.get_object('label_classify').set_text(_('Client organizational unit'))
         self.builder.get_object('label_password_system_type').set_text(_('Password system type'))
         self.builder.get_object('label_date').set_text(_('(Option)Certificate expiration date'))
@@ -208,6 +216,8 @@ class GUIRegistering(Registering):
         self.entry_classify = self.builder.get_object('entry_classify')
         self.label_name = self.builder.get_object('label_name')
         self.entry_name = self.builder.get_object('entry_name')
+
+        self.server_certification = certification.ServerCertification()
 
         self.window.connect("delete-event", Gtk.main_quit)
         self.window.show_all()
@@ -330,6 +340,11 @@ class GUIRegistering(Registering):
 
             #get server version
             domain = self.builder.get_object('entry_address').get_text()
+            path = self.builder.get_object('entry_file').get_text()
+            serverinfo = self.get_serverinfo()
+            server_certification = self.server_certification
+            server_certification.add_hosts_gkm(serverinfo)
+            server_certification.get_root_certificate({'domain':domain, 'path':path})
             server_version = Registering.request_server_version(domain)
             if server_version.startswith(SERVER_VERSION_1_0):
                 self.server_version = SERVER_VERSION_1_0
@@ -511,12 +526,8 @@ class ShellRegistering(Registering):
 
     def cli(self):
         'Get request info from keyboard using cli'
-        print(_('Gooroom Client Server Register.\n'))
-        server_data = {}
-        server_data['domain'] = self.input_surely(_('Enter the domain name: '))
-        server_data['path'] = input(_('(Option)Enter the certificate path of gooroom root CA: '))
-        yield server_data
 
+        #SARABAL VERSION REQUEST
         client_data = {}
         while True:
             cert_reg_type = self.input_surely(_('Enter certificate registration type[0:create 1:update 2: create or update]: '))
@@ -532,7 +543,9 @@ class ShellRegistering(Registering):
             client_data['name'] = ''
             client_data['ou'] = ''
         else:
-            client_data['name'] = self.input_surely(_('Enter the client name: '))
+            client_ip = self.make_ipname()
+            client_data['name'] = \
+                input(_('Enter the client name')+'[{}]: '.format(client_ip)) or client_ip
             client_data['ou'] = self.input_surely(_('Enter the organizational unit: '))
 
         while True:
@@ -553,12 +566,30 @@ class ShellRegistering(Registering):
         client_data['password_system_type'] = self.input_password_system_type(_('Enter the password system type[Default]: '))
         client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
         client_data['comment'] = input(_('(Option)Enter the comment: '))
-        yield client_data
+        return client_data
+
+    def cli_v1_0(self):
+        'Get request info from keyboard using cli'
+
+        client_data = {}
+        client_data['cn'] = self.input_surely(_('Enter the client name: '))
+        client_data['ou'] = self.input_surely(_('Enter the organizational unit: '))
+        client_data['password_system_type'] = self.input_password_system_type(_('Enter the password system type[Default]: '))
+        client_data['user_id'] = self.input_surely(_('Enter the gooroom admin ID: '))
+        client_data['user_pw'] = getpass.getpass(_('Enter the password: '))
+        client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
+        client_data['comment'] = input(_('(Option)Enter the comment: '))
+        #1_0
+        client_data['api_type'] = 'id/pw'
+        client_data['cert_reg_type'] = '0'
+        return client_data
 
     def run(self, args):
         if args.cmd == 'cli':
-            datas = self.cli()
-            server_data = next(datas)
+            print(_('Gooroom Client Server Register.\n'))
+            server_data = {}
+            server_data['domain'] = self.input_surely(_('Enter the domain name: '))
+            server_data['path'] = input(_('(Option)Enter the certificate path of gooroom root CA: '))
 
         elif args.cmd == 'noninteractive':
             if args.password_system_type not in self.password_system_types:
@@ -572,7 +603,19 @@ class ShellRegistering(Registering):
             server_data = {'domain':args.domain, 'path':args.CAfile}
 
         server_certification = certification.ServerCertification()
-        #VERSIONING
+        server_certification.get_root_certificate(server_data)
+        server_version = Registering.request_server_version(server_data['domain'])
+
+        if server_version.startswith(SERVER_VERSION_1_0):
+            self.do_certificate_v1_0(args, server_certification, server_data)
+        else:
+            self.do_certificate(args, server_certification, server_data)
+
+    def do_certificate(self, args, server_certification, server_data):
+        """
+        certificate
+        """
+
         server_data['server_version'] = SERVER_VERSION_NOT_1_0
         sc = server_certification.certificate(server_data)
         for result in sc:
@@ -585,7 +628,7 @@ class ShellRegistering(Registering):
             print(result_text)
 
         if args.cmd == 'cli':
-            client_data = next(datas)
+            client_data = self.cli()
         elif args.cmd == 'noninteractive':
             client_data = {}
             client_data['cn'] = self.make_cn()
@@ -601,7 +644,6 @@ class ShellRegistering(Registering):
         elif args.cmd == 'noninteractive-regkey':
             client_data = {}
             client_data['cn'] = self.make_cn()
-            #client_data['name'] = self.make_name()
             client_data['name'] = args.name
             client_data['ou'] = args.unit
             client_data['password_system_type'] = args.password_system_type
@@ -610,10 +652,57 @@ class ShellRegistering(Registering):
             client_data['regkey'] = args.regkey
             client_data['api_type'] = 'regkey'
             client_data['cert_reg_type'] = args.cert_reg_type
+        else:
+            print('can not support mode({})'.format(args.cmd))
+            return
 
         client_certification = certification.ClientCertification(server_data['domain'])
-        #VERSIONING
         client_data['server_version'] = SERVER_VERSION_NOT_1_0
+        cc = client_certification.certificate(client_data)
+        for result in cc:
+            result_text = self.result_format(result['log'])
+            if result['err']:
+                print("###########ERROR(%s)###########" % result['err'])
+                print(result_text)
+                exit(1)
+
+            print(result_text)
+
+    def do_certificate_v1_0(self, args, server_certification, server_data):
+        """
+        certificate v1.0
+        """
+
+        server_data['server_version'] = SERVER_VERSION_1_0
+        sc = server_certification.certificate(server_data)
+        for result in sc:
+            result_text = self.result_format(result['log'])
+            if result['err']:
+                print("###########ERROR(%s)###########" % result['err'])
+                print(result_text)
+                exit(result['err'])
+
+            print(result_text)
+
+        if args.cmd == 'cli':
+            client_data = self.cli_v1_0()
+        elif args.cmd == 'noninteractive':
+            client_data = {}
+            client_data['cn'] = args.cn
+            client_data['ou'] = args.unit
+            client_data['password_system_type'] = args.password_system_type
+            client_data['user_id'] = args.id
+            client_data['user_pw'] = args.password
+            client_data['valid_date'] = args.expiration_date
+            client_data['comment'] = args.comment
+            client_data['api_type'] = 'id/pw'
+            client_data['cert_reg_type'] = '0'
+        else:
+            print('can not support mode({})'.format(args.cmd))
+            return
+
+        client_certification = certification.ClientCertification(server_data['domain'])
+        client_data['server_version'] = SERVER_VERSION_1_0
         cc = client_certification.certificate(client_data)
         for result in cc:
             result_text = self.result_format(result['log'])
@@ -631,97 +720,3 @@ class ShellRegistering(Registering):
 
         import socket
         return socket.gethostname()
-
-class ShellRegisteringV1_0(Registering):
-
-    def __init__(self):
-        Registering.__init__(self)
-
-    def input_surely(self, prompt):
-        user_input = ''
-        while not user_input:
-            user_input = input(prompt)
-
-        return user_input
-
-    def input_password_system_type(self, prompt):
-        user_input = ''
-        while user_input not in self.password_system_types:
-            user_input = input(prompt) or 'Default'
-
-        return user_input
-
-    def cli(self):
-        'Get request info from keyboard using cli'
-        print(_('Gooroom Client Server Register.\n'))
-        server_data = {}
-        server_data['domain'] = self.input_surely(_('Enter the domain name: '))
-        server_data['path'] = input(_('(Option)Enter the certificate path of gooroom root CA: '))
-        yield server_data
-
-        client_data = {}
-        client_data['cn'] = self.input_surely(_('Enter the client name: '))
-        client_data['ou'] = self.input_surely(_('Enter the organizational unit: '))
-        client_data['password_system_type'] = self.input_password_system_type(_('Enter the password system type[Default]: '))
-        client_data['user_id'] = self.input_surely(_('Enter the gooroom admin ID: '))
-        client_data['user_pw'] = getpass.getpass(_('Enter the password: '))
-        client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
-        client_data['comment'] = input(_('(Option)Enter the comment: '))
-        #1_0
-        client_data['api_type'] = 'id/pw'
-        client_data['cert_reg_type'] = '0'
-        yield client_data
-
-    def run(self, args):
-        if args.cmd == 'cli':
-            datas = self.cli()
-            server_data = next(datas)
-
-        elif args.cmd == 'noninteractive':
-            if args.password_system_type not in self.password_system_types:
-                print('###########ERROR(101)###########')
-                print(_('Check the password system type!'))
-                exit(101)
-
-            server_data = {'domain':args.domain, 'path':args.CAfile}
-
-        server_certification = certification.ServerCertification()
-        #1_0
-        server_data['server_version'] = SERVER_VERSION_1_0
-        sc = server_certification.certificate(server_data)
-        for result in sc:
-            result_text = self.result_format(result['log'])
-            if result['err']:
-                print("###########ERROR(%s)###########" % result['err'])
-                print(result_text)
-                exit(result['err'])
-
-            print(result_text)
-
-        if args.cmd == 'cli':
-            client_data = next(datas)
-        elif args.cmd == 'noninteractive':
-            client_data = {}
-            client_data['cn'] = args.cn
-            client_data['ou'] = args.unit
-            client_data['password_system_type'] = args.password_system_type
-            client_data['user_id'] = args.id
-            client_data['user_pw'] = args.password
-            client_data['valid_date'] = args.expiration_date
-            client_data['comment'] = args.comment
-            #1_0
-            client_data['api_type'] = 'id/pw'
-            client_data['cert_reg_type'] = '0'
-
-        client_certification = certification.ClientCertification(server_data['domain'])
-        #1_0
-        client_data['server_version'] = SERVER_VERSION_1_0
-        cc = client_certification.certificate(client_data)
-        for result in cc:
-            result_text = self.result_format(result['log'])
-            if result['err']:
-                print("###########ERROR(%s)###########" % result['err'])
-                print(result_text)
-                exit(1)
-
-            print(result_text)
