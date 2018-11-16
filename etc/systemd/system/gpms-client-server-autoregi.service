@@ -1,9 +1,8 @@
 [Unit]
 Description=Gooroom Platform client-server auto-registration
-DefaultDependencies=gooroom-agent.service
 After=gooroom-agent.service network-online.target 
 Wants=network-online.target
-Before=systemd-logind.service
+#Before=systemd-logind.service
 ConditionPathExists=/usr/sbin/gpms-auto-registration.sh
 
 [Service]

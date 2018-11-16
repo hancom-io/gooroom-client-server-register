@@ -10,13 +10,14 @@ then
         exit 0
 fi
 
-if [ ! -z $NICDEV ]
+if [ -z $CLIENT_NAME ]
 then
-	
-	CLIENT_NAME=`ip address show $NICDEV | grep inet | head -1 | awk  '{print $2}' | awk -F "/" '{print $1}'`
+	CMD="gooroom-client-server-register noninteractive-regkey -d $GKM_SERVER -u "AUTO_REGED" -k $REG_KEY -r 2"
+else
+	CMD="gooroom-client-server-register noninteractive-regkey -d $GKM_SERVER -m $CLIENT_NAME -u "AUTO_REGED" -k $REG_KEY -r 2"
 fi
 
-if [ -z $CLIENT_NAME ] || [ -z $GKM_SERVER ] || [ -z $REG_KEY ]
+if [ -z $GKM_SERVER ] || [ -z $REG_KEY ]
 then
         echo Configuration is not properly set
 	echo $GKM_SERVER >> /tmp/gpms_autoregi_debug.txt
@@ -37,11 +38,12 @@ else
 	while [ $DO == "yes"  ]
 	do
 		
-		if (gooroom-client-server-register noninteractive-regkey -d $GKM_SERVER -m $CLIENT_NAME -u "AUTO_REGED" -k $REG_KEY -r 2 )
+		#if (gooroom-client-server-register noninteractive-regkey -d $GKM_SERVER -m $CLIENT_NAME -u "AUTO_REGED" -k $REG_KEY -r 2 )
+		if ( $CMD )
 		then
 			DO="no"	
 		fi
 	done
-	sleep 1
+	sleep 2
 	systemctl restart gooroom-agent
 fi
