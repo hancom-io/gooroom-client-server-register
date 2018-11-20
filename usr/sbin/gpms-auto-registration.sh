@@ -45,5 +45,5 @@ else
 		fi
 	done
 	sleep 2
-	systemctl restart gooroom-agent
+	systemctl start gooroom-agent
 fi
