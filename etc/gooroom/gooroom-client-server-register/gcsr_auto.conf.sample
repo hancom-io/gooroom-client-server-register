@@ -2,8 +2,12 @@
 
 #
 # Configuration for automatic GPMS registration script
+# 
+# Use this configuration to create gcsr_auto.conf in the same directory
+# to enable automatic registration to Gooroom Platform Management Server
 #
 
+#
 # set 'Yes' to enable automatic GPMS registration
 ENABLE_AUTO_REGI=No
 

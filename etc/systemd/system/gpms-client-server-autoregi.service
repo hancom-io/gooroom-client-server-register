@@ -3,7 +3,7 @@ Description=Gooroom Platform client-server auto-registration
 After=gooroom-agent.service network-online.target 
 Wants=network-online.target
 #Before=systemd-logind.service
-ConditionPathExists=/usr/sbin/gpms-auto-registration.sh
+ConditionPathExists=/etc/gooroom/gooroom-client-server-register/gcsr_auto.conf
 
 [Service]
 EnvironmentFile=/etc/gooroom/gooroom-client-server-register/gcsr_auto.conf 
