@@ -100,6 +100,10 @@ def argument_parser():
 
 
 if __name__ == '__main__':
+    '''
+    main
+    '''
+
     if len(sys.argv) == 1:
         usage()
         exit(1)
