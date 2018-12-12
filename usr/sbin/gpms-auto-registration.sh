@@ -42,6 +42,7 @@ else
 		if ( $CMD )
 		then
 			DO="no"	
+			rm -f /etc/gooroom/gooroom-client-server-register/gcsr_auto.conf
 		fi
 	done
 	sleep 2
