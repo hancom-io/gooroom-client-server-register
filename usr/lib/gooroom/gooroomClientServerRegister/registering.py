@@ -96,13 +96,27 @@ class Registering():
         make cn with sn + mac
         """
 
-        import glob
-        for iface in glob.glob('/sys/class/net/*'):
-            if iface == '/sys/class/net/lo':
-                continue
-            with open(iface+'/address') as f2:
-                return f2.read().strip('\n').replace(':', '')
-        return 'CN-NOT-FOUND-ERROR'
+        CN_PATH = '/etc/gooroom/gooroom-client-server-register/gcsr.conf'
+        if os.path.exists(CN_PATH):
+            import configparser
+            parser = configparser.RawConfigParser()
+            parser.optionxform = str
+            parser.read(CN_PATH)
+            return parser.get('certificate', 'client_name')
+            
+        if os.path.exists('/sys/class/net/enp0s3/address'):
+            with open('sys/class/net/enp0s3/address') as f:
+                return f.read()
+        else:
+            import glob
+            ifaces = [i for i in glob.glob('/sys/class/net/*')]
+            ifaces.sort()
+            for iface in ifaces:
+                if iface == '/sys/class/net/lo':
+                    continue
+                with open(iface+'/address') as f2:
+                    return f2.read().strip('\n').replace(':', '')
+            return 'CN-NOT-FOUND-ERROR'
 
     def make_ipname(self):
         """
