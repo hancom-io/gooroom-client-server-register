@@ -96,6 +96,7 @@ class Registering():
         make cn with sn + mac
         """
 
+        '''
         CN_PATH = '/etc/gooroom/gooroom-client-server-register/gcsr.conf'
         if os.path.exists(CN_PATH):
             import configparser
@@ -103,11 +104,12 @@ class Registering():
             parser.optionxform = str
             parser.read(CN_PATH)
             return parser.get('certificate', 'client_name')
+        '''
             
         ENP_PATH = '/sys/class/net/enp0s3/address'
         if os.path.exists(ENP_PATH):
             with open(ENP_PATH) as f:
-                return f.read()
+                return f.read().strip('\n').replace(':', '')
         else:
             import glob
             ifaces = [i for i in glob.glob('/sys/class/net/*')]
