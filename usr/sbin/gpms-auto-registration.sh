@@ -38,7 +38,6 @@ else
 	while [ $DO == "yes"  ]
 	do
 		
-		#if (gooroom-client-server-register noninteractive-regkey -d $GKM_SERVER -m $CLIENT_NAME -u "AUTO_REGED" -k $REG_KEY -r 2 )
 		if ( $CMD )
 		then
 			DO="no"	
