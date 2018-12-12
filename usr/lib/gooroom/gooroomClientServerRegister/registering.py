@@ -104,8 +104,9 @@ class Registering():
             parser.read(CN_PATH)
             return parser.get('certificate', 'client_name')
             
-        if os.path.exists('/sys/class/net/enp0s3/address'):
-            with open('sys/class/net/enp0s3/address') as f:
+        ENP_PATH = '/sys/class/net/enp0s3/address'
+        if os.path.exists(ENP_PATH):
+            with open(ENP_PATH) as f:
                 return f.read()
         else:
             import glob
