@@ -26,6 +26,7 @@ then
         exit 1
 fi
 
+systemctl enable gooroom-agent
 systemctl start gooroom-agent
 sleep 1
 if ( dbus-send --system --print-reply --type=method_call --dest='kr.gooroom.agent' '/kr/gooroom/agent' kr.gooroom.agent.do_task string:'{"module" : {"module_name" : "SERVER","task" : {"task_name" : "grm_heartbit","in" : {}}}}' | grep "\"status\"\:\ \"200\"" )
@@ -43,7 +44,7 @@ else
 			DO="no"	
 			rm -f /etc/gooroom/gooroom-client-server-register/gcsr_auto.conf
 		fi
+	    sleep 2
 	done
-	sleep 2
 	systemctl start gooroom-agent
 fi
