@@ -98,13 +98,16 @@ class Registering():
 
         CN_PATH = '/etc/gooroom/gooroom-client-server-register/gcsr.conf'
         if os.path.exists(CN_PATH):
-            import configparser
-            parser = configparser.RawConfigParser()
-            parser.optionxform = str
-            parser.read(CN_PATH)
-            cn = parser.get('certificate', 'client_name').strip().strip('\n')
-            print('gcsr.conf={}'.format(cn))
-            return cn
+            try:
+                import configparser
+                parser = configparser.RawConfigParser()
+                parser.optionxform = str
+                parser.read(CN_PATH)
+                cn = parser.get('certificate', 'client_name').strip().strip('\n')
+                print('gcsr.conf={}'.format(cn))
+                return cn
+            except:
+                pass
             
         ENP_PATH = '/sys/class/net/enp0s3/address'
         if os.path.exists(ENP_PATH):
