@@ -1,3 +1,35 @@
+gooroom-client-server-register (0.9.4+grm1u1) unstable; urgency=medium
+
+  [ hmkim ]
+  * [a347ca1f] Beginning fourth.
+  * [fbd1ed4d] changed copyright to GPLv3
+  * [11294865] fixed email in copyright
+  * [9bc156b7] adding server-version
+  * [5a7f3591] changed server-version naming rule
+  * [e49840e9] added server-version restful api
+  * [397fd2f2] merged autoregistration
+  * [7657d73e] added auto-register usage message
+  * [a49c547e] changed server-version response format
+  * [6574535d] changed place of getting root certification. changed client name to ipaddress.
+  * [6fa1c6b0] changed agent-restart to agent-start in autoscript.
+  * [d719d09f] for codereivew build
+  * [a16d714a] changed make_cn logic
+  * [b2fe1fee] fixed make_cn() bug
+  * [4e510da0] fixed make_cn() logic
+  * [76a159bc] changed make_cn() logic
+  * [1363f5b4] fixed make_cn bug when gcsr.conf exists but no client_name.
+  * [42a246e6] fixed auto-register-script
+
+  [ Hwanii Jung ]
+  * [8dca5b3a] systemd script is updated for faster boot
+  * [9a3af65b] modified to skip gpms auto-registration script when conf file is not present.
+  * [7a96e4da] Registration will not be attempted again once successfully registered.
+  * [2c90f94f] A script modified
+
+  [ Gooroom Autobuilder ]
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Tue, 15 Jan 2019 12:25:52 +0900
+
 gooroom-client-server-register (0.9.3+grm1u1) unstable; urgency=medium
 
   [ hmkim ]
