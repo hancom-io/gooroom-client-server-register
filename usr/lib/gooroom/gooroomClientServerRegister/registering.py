@@ -13,7 +13,6 @@ gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk, Gtk
 
 import certification
-from gcsr_define import *
 
 gettext.install("gooroom-client-server-register", "/usr/share/gooroom/locale")
 
@@ -79,8 +78,6 @@ class Registering():
     def __init__(self):
         self.WORK_DIR = '/usr/lib/gooroom/gooroomClientServerRegister'
         self.password_system_types = ['Default', 'Type1', 'Type2']
-        #VERSIONING
-        self.server_version = None
 
     def result_format(self, result):
         "Return result log pretty"
@@ -133,29 +130,6 @@ class Registering():
         make name with IP
         """
         return os.popen('hostname --all-ip-addresses').read().split(' ')[0]
-
-    @classmethod
-    def request_server_version(cls, domain):
-        """
-        get server-version from gkm
-        """
-
-        try:
-            import requests
-            response = requests.get('https://{}/gkm/v2/version'.format(domain), verify=False)
-            if response.status_code != 200:
-                raise Exception('!! https status={}'.format(response.status_code))
-            resp_data = response.json()
-            if resp_data['status']['result'] != 'success':
-                raise Exception('!! gkm status is failure={}'.format(resp_data))
-
-            server_version = resp_data['data'][0]['version']
-        except:
-            import traceback
-            print(traceback.format_exc())
-            server_version = SERVER_VERSION_1_0
-
-        return server_version
 
 class GUIRegistering(Registering):
     def __init__(self):
@@ -362,25 +336,12 @@ class GUIRegistering(Registering):
                     self.show_info_dialog(_('GKM ip adress must be present'))
                     return
 
-            #get server version
             domain = self.builder.get_object('entry_address').get_text()
             path = self.builder.get_object('entry_file').get_text()
             serverinfo = self.get_serverinfo()
             server_certification = self.server_certification
             server_certification.add_hosts_gkm(serverinfo)
             server_certification.get_root_certificate({'domain':domain, 'path':path})
-            server_version = Registering.request_server_version(domain)
-            if server_version.startswith(SERVER_VERSION_1_0):
-                self.server_version = SERVER_VERSION_1_0
-            else:
-                self.server_version = SERVER_VERSION_NOT_1_0
-
-            #VERSIONING
-            if self.server_version == SERVER_VERSION_1_0:
-                self.builder.get_object('radiobutton_regkey').set_sensitive(False)
-                self.builder.get_object('entry_cn').set_text('')
-                self.builder.get_object('entry_cn').set_sensitive(True)
-                self.builder.get_object('entry_name').set_sensitive(False)
 
             grid = self.builder.get_object('grid2')
             if self.builder.get_object('radiobutton_update').get_active():
@@ -485,7 +446,6 @@ class GUIRegistering(Registering):
         server_data['domain'] = self.builder.get_object('entry_address').get_text()
         server_data['path'] = self.builder.get_object('entry_file').get_text()
         server_data['serverinfo'] = self.get_serverinfo()
-        server_data['server_version'] = self.server_version
         yield server_data
 
         client_data = {}
@@ -513,8 +473,7 @@ class GUIRegistering(Registering):
         else:
             cert_reg_type = '2'
         client_data['cert_reg_type'] = cert_reg_type
-        #VERSIONING
-        client_data['server_version'] = self.server_version
+        client_data['ipv4'] = self.make_ipname()
         yield client_data
 
     def show_info_dialog(self, message, error=None):
@@ -590,22 +549,7 @@ class ShellRegistering(Registering):
         client_data['password_system_type'] = self.input_password_system_type(_('Enter the password system type[Default]: '))
         client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
         client_data['comment'] = input(_('(Option)Enter the comment: '))
-        return client_data
-
-    def cli_v1_0(self):
-        'Get request info from keyboard using cli'
-
-        client_data = {}
-        client_data['cn'] = self.input_surely(_('Enter the client name: '))
-        client_data['ou'] = self.input_surely(_('Enter the organizational unit: '))
-        client_data['password_system_type'] = self.input_password_system_type(_('Enter the password system type[Default]: '))
-        client_data['user_id'] = self.input_surely(_('Enter the gooroom admin ID: '))
-        client_data['user_pw'] = getpass.getpass(_('Enter the password: '))
-        client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
-        client_data['comment'] = input(_('(Option)Enter the comment: '))
-        #1_0
-        client_data['api_type'] = 'id/pw'
-        client_data['cert_reg_type'] = '0'
+        client_data['ipv4'] = self.make_ipname()
         return client_data
 
     def run(self, args):
@@ -628,19 +572,14 @@ class ShellRegistering(Registering):
 
         server_certification = certification.ServerCertification()
         server_certification.get_root_certificate(server_data)
-        server_version = Registering.request_server_version(server_data['domain'])
 
-        if server_version.startswith(SERVER_VERSION_1_0):
-            self.do_certificate_v1_0(args, server_certification, server_data)
-        else:
-            self.do_certificate(args, server_certification, server_data)
+        self.do_certificate(args, server_certification, server_data)
 
     def do_certificate(self, args, server_certification, server_data):
         """
         certificate
         """
 
-        server_data['server_version'] = SERVER_VERSION_NOT_1_0
         sc = server_certification.certificate(server_data)
         for result in sc:
             result_text = self.result_format(result['log'])
@@ -681,52 +620,6 @@ class ShellRegistering(Registering):
             return
 
         client_certification = certification.ClientCertification(server_data['domain'])
-        client_data['server_version'] = SERVER_VERSION_NOT_1_0
-        cc = client_certification.certificate(client_data)
-        for result in cc:
-            result_text = self.result_format(result['log'])
-            if result['err']:
-                print("###########ERROR(%s)###########" % result['err'])
-                print(result_text)
-                exit(1)
-
-            print(result_text)
-
-    def do_certificate_v1_0(self, args, server_certification, server_data):
-        """
-        certificate v1.0
-        """
-
-        server_data['server_version'] = SERVER_VERSION_1_0
-        sc = server_certification.certificate(server_data)
-        for result in sc:
-            result_text = self.result_format(result['log'])
-            if result['err']:
-                print("###########ERROR(%s)###########" % result['err'])
-                print(result_text)
-                exit(result['err'])
-
-            print(result_text)
-
-        if args.cmd == 'cli':
-            client_data = self.cli_v1_0()
-        elif args.cmd == 'noninteractive':
-            client_data = {}
-            client_data['cn'] = args.cn
-            client_data['ou'] = args.unit
-            client_data['password_system_type'] = args.password_system_type
-            client_data['user_id'] = args.id
-            client_data['user_pw'] = args.password
-            client_data['valid_date'] = args.expiration_date
-            client_data['comment'] = args.comment
-            client_data['api_type'] = 'id/pw'
-            client_data['cert_reg_type'] = '0'
-        else:
-            print('can not support mode({})'.format(args.cmd))
-            return
-
-        client_certification = certification.ClientCertification(server_data['domain'])
-        client_data['server_version'] = SERVER_VERSION_1_0
         cc = client_certification.certificate(client_data)
         for result in cc:
             result_text = self.result_format(result['log'])

@@ -32,6 +32,7 @@ sleep 1
 if ( dbus-send --system --print-reply --type=method_call --dest='kr.gooroom.agent' '/kr/gooroom/agent' kr.gooroom.agent.do_task string:'{"module" : {"module_name" : "SERVER","task" : {"task_name" : "grm_heartbit","in" : {}}}}' | grep "\"status\"\:\ \"200\"" )
 #if ( ! true  ) 
 then
+	rm -f /etc/gooroom/gooroom-client-server-register/gcsr_auto.conf
 	echo gpms-server is already connected.
 else
 	systemctl stop gooroom-agent
@@ -46,5 +47,6 @@ else
 		fi
 	    sleep 2
 	done
+	systemctl enable gooroom-agent
 	systemctl start gooroom-agent
 fi

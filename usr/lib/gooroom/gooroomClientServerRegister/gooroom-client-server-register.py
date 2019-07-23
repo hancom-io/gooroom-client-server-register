@@ -5,8 +5,6 @@ import argparse
 import gettext
 import registering
 
-from gcsr_define import *
-
 gettext.install('gooroom-client-server-register', '/usr/share/gooroom/locale')
 
 example_v1 = """v1.0)gooroom-client-server-register noninteractive -d gkm.gooroom.kr
@@ -40,8 +38,7 @@ example_regkey = """>v1.0)gooroom-client-server-register noninteractive-regkey -
                                             [-e 2020-01-01]
                                             [-c 2F ooo]"""
 
-autoregisteration_help ="""To automatically register your client to Gooroom Platform Management Server(GPMS) on boot,
-                           configure “/etc/gooroom/gooroom-client-server-register/gcsr_auto.conf” accordingly."""
+autoregisteration_help ="""To automatically register your client to Gooroom Platform Management Server(GPMS) on boot, configure /etc/gooroom/gooroom-client-server-register/gcsr_auto.conf accordingly."""
 
 def usage():
     print('ex)gooroom-client-server-register gui\n')
@@ -57,9 +54,6 @@ def usage():
 def argument_parser():
     clientip = os.popen('hostname --all-ip-addresses').read().split(' ')[0]
     parser = argparse.ArgumentParser(description=_('Register certificate of gooroom root CA & gooroom platform management server'))
-    #parser.add_argument('-h', '--help', help=_('show this help message and exit'))
-    #parser.add_argument('--help noninteractive', help=_('Show help on the noninteractive command'))
-    parser.add_argument('--version', action='version', version=_('Gooroom Client Server Register 0.9'))
 
     subparsers = parser.add_subparsers(dest='cmd', help=_('commands'))
     subparsers.required = True
