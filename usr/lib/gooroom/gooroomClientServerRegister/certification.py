@@ -22,6 +22,11 @@ urllib3.disable_warnings(urllib3.exceptions.SecurityWarning)
 
 gettext.install('gooroom-client-server-register', '/usr/share/gooroom/locale')
 
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('Gdk', '3.0')
+from gi.repository import Gtk
+
 class Certification():
 
     def __init__(self):

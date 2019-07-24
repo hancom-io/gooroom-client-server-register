@@ -341,7 +341,12 @@ class GUIRegistering(Registering):
             serverinfo = self.get_serverinfo()
             server_certification = self.server_certification
             server_certification.add_hosts_gkm(serverinfo)
-            server_certification.get_root_certificate({'domain':domain, 'path':path})
+            try:
+                server_certification.get_root_certificate({'domain':domain, 'path':path})
+            except:
+                self.show_info_dialog(_('Authentication server connection failed.\n'\
+                                        'Check the connection information and network status.'))
+                raise
 
             grid = self.builder.get_object('grid2')
             if self.builder.get_object('radiobutton_update').get_active():
