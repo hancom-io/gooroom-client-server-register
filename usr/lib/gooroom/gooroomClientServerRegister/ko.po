@@ -79,7 +79,7 @@ msgstr "인증서의 만료기간은 오늘날짜부터 설정할 수 있습니�
 
 #: certification.py:343
 msgid "Incorrect date format, should be YYYY-MM-DD"
-msgstr "날짜 형식이 올바르지 않으며 YYYY-MM-DD 여아 합니다"
+msgstr "날짜 형식이 올바르지 않으며 YYYY-MM-DD 여야 합니다"
 
 #: certification.py:403
 msgid "Client certificate issue failed."
