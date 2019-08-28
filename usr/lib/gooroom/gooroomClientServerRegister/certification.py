@@ -273,6 +273,7 @@ class ServerCertification(Certification):
             ' %Y-%m-%d %H:%M:%S')
 
         #####write config
+        gpms['gkmUrl'] = domain
         self._add_config(gpms)
 
         #####write gkm/glm/grm/gpms on /etc/hosts (again)
