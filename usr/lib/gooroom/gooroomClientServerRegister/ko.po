@@ -204,7 +204,7 @@ msgstr "생성"
 
 #: registering.py:150
 msgid "Update"
-msgstr "갱신"
+msgstr "재등록/갱신"
 
 #: registering.py:151
 msgid "Create or Update"
