@@ -148,8 +148,9 @@ class ServerCertification(Certification):
         if local_crt_path:
             # get root certificate from local path
             # TODO: need to verify certificate
-            self.remove_file(self.root_crt_path)
-            shutil.copy(local_crt_path, self.root_crt_path)
+            if local_crt_path != self.root_crt_path:
+                self.remove_file(self.root_crt_path)
+                shutil.copy(local_crt_path, self.root_crt_path)
         else:
             # get root certificate from gooroom key server certificate chain
             if ':' in domain:
