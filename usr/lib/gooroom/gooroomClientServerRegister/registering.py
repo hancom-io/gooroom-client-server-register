@@ -701,6 +701,7 @@ class ShellRegistering(Registering):
             client_data['comment'] = args.comment
             client_data['api_type'] = 'id/pw'
             client_data['cert_reg_type'] = args.cert_reg_type
+            client_data['ipv4'] = self.make_ipname()
         elif args.cmd == 'noninteractive-regkey':
             client_data = {}
             client_data['cn'] = self.make_cn()
@@ -712,6 +713,7 @@ class ShellRegistering(Registering):
             client_data['regkey'] = args.regkey
             client_data['api_type'] = 'regkey'
             client_data['cert_reg_type'] = args.cert_reg_type
+            client_data['ipv4'] = self.make_ipname()
         else:
             print('can not support mode({})'.format(args.cmd))
             return
