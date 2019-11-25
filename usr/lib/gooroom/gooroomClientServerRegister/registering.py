@@ -15,6 +15,8 @@ from gi.repository import Gdk, Gtk
 import certification
 import subprocess
 
+from pwd import getpwnam
+
 gettext.install("gooroom-client-server-register", "/usr/share/gooroom/locale")
 
 class RegisterThread(threading.Thread):
@@ -447,9 +449,8 @@ class GUIRegistering(Registering):
                             active_yes = True
 
                     if service_lightdm and state_active and active_yes:
-                        remote_user_file = \
-                            '/var/run/user/{}/gooroom/.grm-user'.format(uid)
-                        if os.path.exists(remote_user_file):
+                        gecos = getpwnam(user).pw_gecos.split(',')
+                        if len(gecos) >= 5 and gecos[4] == 'gooroom-account':
                             return user
                         else:
                             return '+{}'.format(user)
