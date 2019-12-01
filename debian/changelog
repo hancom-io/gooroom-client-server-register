@@ -1,3 +1,27 @@
+gooroom-client-server-register (1.0.0+grm2u1) unstable; urgency=medium
+
+  [ hmkim ]
+  * [5025568c] added certificate expire-date validation. changed autostart-script. fixed /etc/hosts recording bug.
+  * [93ede131] added dialogbox to inform network trouble
+  * [ce6c7252] fixed recording bug in /etc/hosts
+  * [66728983] fixed trival output comment
+  * [cab8bf7a] fixed bug which gkmUrl is empty in gcsr.conf
+  * [c8255499] changed comment of update of GUI
+  * [1f3eab41] fixed 0001632
+  * [0dbfae17] added file-chooser
+  * [fb61ab91] added ipv4 to noninteractive modes
+  * [757bb3fd] changed copyright email address
+  * [b3514f05] changed Source of copyright
+  * [0fee32c8] changed how to check whether remote user or not to gecos
+  * [d54d43be] changed copyright from GPL-3 to GPL-2.0
+
+  [ jongkyung.woo ]
+  * [cad188f3] Updated copyright
+
+  [ Gooroom Autobuilder ]
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Sun, 01 Dec 2019 17:14:10 +0900
+
 gooroom-client-server-register (0.9.4+grm1u1) unstable; urgency=medium
 
   [ hmkim ]
