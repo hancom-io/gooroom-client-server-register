@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: gooroom-client-server-register
-Source: <https://github.com/gooroom/gooroom-client-server-register
+Source: https://github.com/gooroom/gooroom-client-server-register
 
 Files: *
 Copyright: 2019 gooroom <gooroom@gooroom.kr>
