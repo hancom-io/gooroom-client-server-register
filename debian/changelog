@@ -1,5 +1,5 @@
-gooroom-client-server-register (1.0.1+grm2u1) unstable; urgency=medium
+gooroom-client-server-register (1.0.2+grm2u1) unstable; urgency=medium
 
   * Initial Release
 
- -- Gooroom Autobuilder <jenkins@gooroom.kr>  Mon, 02 Dec 2019 12:54:54 +0900
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Tue, 03 Dec 2019 12:29:23 +0900
