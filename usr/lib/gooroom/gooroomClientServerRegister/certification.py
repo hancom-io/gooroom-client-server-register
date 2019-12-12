@@ -84,6 +84,7 @@ class ServerCertification(Certification):
         self.err_msg = _('Fail to register Gooroom Platform Management Server complete.')
 
     def certificate(self, data):
+        self.result = {'err':None, 'log':[]}
         serverinfo = {}
         if 'serverinfo' in data:
             si = data['serverinfo']
