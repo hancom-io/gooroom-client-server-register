@@ -146,6 +146,7 @@ class GUIRegistering(Registering):
         self.window.set_default_size(600, 380)
         self.window.set_title(_('Gooroom Client Server Register'))
         self.window.set_icon_name('gooroom-client-server-register')
+        self.window.set_position(Gtk.WindowPosition.CENTER)
 
         self.builder.get_object('label_subtitle1').set_text(_("Register Gooroom Root CA in the client.\nAnd, add gooroom platform management servers from the server."))
         self.builder.get_object('label_cert_type').set_text(_('How to regist certificate'))
