@@ -82,7 +82,6 @@ class Registering():
     "Registering parent class"
     def __init__(self):
         self.WORK_DIR = '/usr/lib/gooroom/gooroomClientServerRegister'
-        self.password_system_types = ['Default', 'Type1', 'Type2']
 
     def result_format(self, result):
         "Return result log pretty"
@@ -184,7 +183,6 @@ class GUIRegistering(Registering):
         self.builder.get_object('entry_name').set_placeholder_text(self.make_ipname())
         self.builder.get_object('entry_name').set_text(self.make_ipname())
         self.builder.get_object('label_classify').set_text(_('Client organizational unit'))
-        self.builder.get_object('label_password_system_type').set_text(_('Password system type'))
         self.builder.get_object('label_date').set_text(_('(Option)Certificate expiration date'))
 
         self.builder.get_object('label_id').set_text(_('Gooroom admin ID'))
@@ -203,11 +201,6 @@ class GUIRegistering(Registering):
         self.builder.get_object('button_close2').connect('clicked', Gtk.main_quit)
 
         self.builder.get_object('checkbutton_hosts').connect('toggled', self.on_checkbutton_hosts_toggled)
-        combobox_password_system_type = self.builder.get_object('combobox_password_system_type')
-        for org in self.password_system_types:
-            combobox_password_system_type.append_text(org)
-
-        combobox_password_system_type.set_active(0)
 
         self.builder.get_object('radiobutton_idpw').set_label(_('ID/PW'))
         self.builder.get_object('radiobutton_idpw').connect('toggled', self.on_radiobutton_idpw_clicked)
@@ -569,7 +562,7 @@ class GUIRegistering(Registering):
         client_data['cn'] = self.builder.get_object('entry_cn').get_text()
         client_data['name'] = self.builder.get_object('entry_name').get_text()
         client_data['ou'] = self.builder.get_object('entry_classify').get_text()
-        client_data['password_system_type'] = self.builder.get_object('combobox_password_system_type').get_active_text()
+        client_data['password_system_type'] = "sha256"
         client_data['user_id'] = self.builder.get_object('entry_id').get_text()
         client_data['user_pw'] = self.builder.get_object('entry_password').get_text()
         client_data['valid_date'] = self.builder.get_object('entry_date').get_text()
@@ -617,13 +610,6 @@ class ShellRegistering(Registering):
 
         return user_input
 
-    def input_password_system_type(self, prompt):
-        user_input = ''
-        while user_input not in self.password_system_types:
-            user_input = input(prompt) or 'Default'
-
-        return user_input
-
     def cli(self):
         'Get request info from keyboard using cli'
 
@@ -663,7 +649,7 @@ class ShellRegistering(Registering):
             client_data['regkey'] = self.input_surely(_('Enter the registration key: '))
         client_data['api_type'] = api_type
 
-        client_data['password_system_type'] = self.input_password_system_type(_('Enter the password system type[Default]: '))
+        client_data['password_system_type'] = "sha256"
         client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
         client_data['comment'] = input(_('(Option)Enter the comment: '))
         client_data['ipv4'] = self.make_ipname()
@@ -677,11 +663,6 @@ class ShellRegistering(Registering):
             server_data['path'] = input(_('(Option)Enter the certificate path of gooroom root CA: '))
 
         elif args.cmd == 'noninteractive':
-            if args.password_system_type not in self.password_system_types:
-                print('###########ERROR(101)###########')
-                print(_('Check the password system type!'))
-                exit(101)
-
             server_data = {'domain':args.domain, 'path':args.CAfile}
 
         elif args.cmd == 'noninteractive-regkey':
@@ -714,7 +695,7 @@ class ShellRegistering(Registering):
             client_data['cn'] = self.make_cn()
             client_data['name'] = args.name
             client_data['ou'] = args.unit
-            client_data['password_system_type'] = args.password_system_type
+            client_data['password_system_type'] = "sha256"
             client_data['user_id'] = args.id
             client_data['user_pw'] = args.password
             client_data['valid_date'] = args.expiration_date
@@ -727,7 +708,7 @@ class ShellRegistering(Registering):
             client_data['cn'] = self.make_cn()
             client_data['name'] = args.name
             client_data['ou'] = args.unit
-            client_data['password_system_type'] = args.password_system_type
+            client_data['password_system_type'] = "sha256"
             client_data['valid_date'] = args.expiration_date
             client_data['comment'] = args.comment
             client_data['regkey'] = args.regkey

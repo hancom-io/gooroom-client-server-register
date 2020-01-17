@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.0 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.12"/>
   <object class="GtkListStore"/>
   <object class="GtkTextBuffer" id="textbuffer_result"/>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkNotebook" id="notebook">
         <property name="visible">True</property>
@@ -362,7 +365,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">9</property>
+                <property name="top_attach">8</property>
               </packing>
             </child>
             <child>
@@ -374,7 +377,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">7</property>
+                <property name="top_attach">6</property>
               </packing>
             </child>
             <child>
@@ -386,7 +389,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">8</property>
+                <property name="top_attach">7</property>
               </packing>
             </child>
             <child>
@@ -397,7 +400,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">12</property>
+                <property name="top_attach">11</property>
                 <property name="width">2</property>
               </packing>
             </child>
@@ -456,7 +459,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">13</property>
+                <property name="top_attach">12</property>
                 <property name="width">2</property>
               </packing>
             </child>
@@ -494,7 +497,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">7</property>
+                <property name="top_attach">6</property>
               </packing>
             </child>
             <child>
@@ -510,7 +513,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">8</property>
+                <property name="top_attach">7</property>
               </packing>
             </child>
             <child>
@@ -522,7 +525,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">11</property>
+                <property name="top_attach">10</property>
               </packing>
             </child>
             <child>
@@ -534,7 +537,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">11</property>
+                <property name="top_attach">10</property>
               </packing>
             </child>
             <child>
@@ -547,30 +550,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">9</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label_password_system_type">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="label" translatable="yes">label</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">5</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkComboBoxText" id="combobox_password_system_type">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_right">50</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">5</property>
+                <property name="top_attach">8</property>
               </packing>
             </child>
             <child>
@@ -582,7 +562,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">10</property>
+                <property name="top_attach">9</property>
               </packing>
             </child>
             <child>
@@ -594,7 +574,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">10</property>
+                <property name="top_attach">9</property>
               </packing>
             </child>
             <child>
@@ -607,7 +587,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">6</property>
+                <property name="top_attach">5</property>
               </packing>
             </child>
             <child>
@@ -622,7 +602,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">6</property>
+                <property name="top_attach">5</property>
               </packing>
             </child>
             <child>
