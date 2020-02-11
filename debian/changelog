@@ -1,3 +1,15 @@
+gooroom-client-server-register (1.0.3+grm2u1) unstable; urgency=medium
+
+  [ junsungc ]
+  * [9755a537] fixed 0001826
+  * [43b588f1] fixed 0001830
+  * [fb7181c3] Change common-name(cn) value. [mac -> mac+hash(hardware SN)]
+  * [48449958] Delete the password_system_type UI. The password_system_type in the gcsr.conf file contains [sha256]
+
+  [ Gooroom Autobuilder ]
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Tue, 11 Feb 2020 09:53:03 +0900
+
 gooroom-client-server-register (1.0.2+grm2u1) unstable; urgency=medium
 
   * Initial Release
