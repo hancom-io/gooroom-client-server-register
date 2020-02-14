@@ -158,7 +158,15 @@ class ServerCertification(Certification):
                 port = int(domain.strip('\n').split(':')[-1])
             else:
                 port = 443
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            addrinfo = socket.getaddrinfo(domain, port, 0, 0, socket.SOL_TCP)
+
+            if addrinfo[0][0] == socket.AF_INET: #IPv4
+                ipver = socket.AF_INET
+            else:
+                ipver = socket.AF_INET6
+
+            s = socket.socket(ipver, socket.SOCK_STREAM, 0)
             s.settimeout(5)
             s.connect((domain, port))
 
