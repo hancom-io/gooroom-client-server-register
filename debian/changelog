@@ -1,3 +1,12 @@
+gooroom-client-server-register (1.0.4+grm2u1) unstable; urgency=medium
+
+  [ junsungc ]
+  * [ac950e85] Support IPv6
+
+  [ Gooroom Autobuilder ]
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Mon, 17 Feb 2020 10:23:58 +0900
+
 gooroom-client-server-register (1.0.3+grm2u1) unstable; urgency=medium
 
   [ junsungc ]
