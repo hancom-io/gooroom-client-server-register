@@ -163,8 +163,10 @@ class ServerCertification(Certification):
 
             if addrinfo[0][0] == socket.AF_INET: #IPv4
                 ipver = socket.AF_INET
+                yield "ipv4"
             else:
                 ipver = socket.AF_INET6
+                yield "ipv6"
 
             s = socket.socket(ipver, socket.SOCK_STREAM, 0)
             s.settimeout(5)

@@ -151,6 +151,12 @@ class Registering():
         """
         return os.popen('hostname --all-ip-addresses').read().split(' ')[0]
 
+    def make_ipv6name(self):
+        """
+        make name with IPv6
+        """
+        return os.popen('/sbin/ip -6 addr | grep inet6 | awk -F \'[ \t]+|/\' \'{print $3}\' | grep -v ^::1').read().split('\n')[0]
+
 class GUIRegistering(Registering):
     def __init__(self):
         Registering.__init__(self)
@@ -357,7 +363,8 @@ class GUIRegistering(Registering):
             server_certification = self.server_certification
             server_certification.add_hosts_gkm(serverinfo)
             try:
-                server_certification.get_root_certificate({'domain':domain, 'path':path})
+                for ip_type in server_certification.get_root_certificate({'domain':domain, 'path':path}):
+                    self.ip_type=ip_type
             except:
                 self.show_info_dialog(_('Authentication server connection failed.\n'\
                                         'Check the connection information and network status.'))
@@ -583,7 +590,12 @@ class GUIRegistering(Registering):
         else:
             cert_reg_type = '2'
         client_data['cert_reg_type'] = cert_reg_type
-        client_data['ipv4'] = self.make_ipname()
+        if self.ip_type == 'ipv4':
+            client_data['ipv4'] = self.make_ipname()
+            client_data['ipv6'] = ''
+        else:
+            client_data['ipv4'] = ''
+            client_data['ipv6'] = self.make_ipv6name()
         yield client_data
 
     def show_info_dialog(self, message, error=None):
@@ -652,7 +664,12 @@ class ShellRegistering(Registering):
         client_data['password_system_type'] = "sha256"
         client_data['valid_date'] = input(_('(Option)Enter the valid date(YYYY-MM-DD): '))
         client_data['comment'] = input(_('(Option)Enter the comment: '))
-        client_data['ipv4'] = self.make_ipname()
+        if self.ip_type == 'ipv4':
+            client_data['ipv4'] = self.make_ipname()
+            client_data['ipv6'] = ''
+        else:
+            client_data['ipv4'] = ''
+            client_data['ipv6'] = self.make_ipv6name()
         return client_data
 
     def run(self, args):
@@ -669,7 +686,8 @@ class ShellRegistering(Registering):
             server_data = {'domain':args.domain, 'path':args.CAfile}
 
         server_certification = certification.ServerCertification()
-        server_certification.get_root_certificate(server_data)
+        for ip_type in server_certification.get_root_certificate({'domain':domain, 'path':path}):
+            self.ip_type=ip_type
 
         self.do_certificate(args, server_certification, server_data)
 
@@ -702,7 +720,12 @@ class ShellRegistering(Registering):
             client_data['comment'] = args.comment
             client_data['api_type'] = 'id/pw'
             client_data['cert_reg_type'] = args.cert_reg_type
-            client_data['ipv4'] = self.make_ipname()
+            if self.ip_type == 'ipv4':
+                client_data['ipv4'] = self.make_ipname()
+                client_data['ipv6'] = ''
+            else:
+                client_data['ipv4'] = ''
+                client_data['ipv6'] = self.make_ipv6name()
         elif args.cmd == 'noninteractive-regkey':
             client_data = {}
             client_data['cn'] = self.make_cn()
@@ -714,7 +737,12 @@ class ShellRegistering(Registering):
             client_data['regkey'] = args.regkey
             client_data['api_type'] = 'regkey'
             client_data['cert_reg_type'] = args.cert_reg_type
-            client_data['ipv4'] = self.make_ipname()
+            if self.ip_type == 'ipv4':
+                client_data['ipv4'] = self.make_ipname()
+                client_data['ipv6'] = ''
+            else:
+                client_data['ipv4'] = ''
+                client_data['ipv6'] = self.make_ipv6name()
         else:
             print('can not support mode({})'.format(args.cmd))
             return
