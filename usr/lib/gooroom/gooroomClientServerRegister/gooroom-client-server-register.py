@@ -10,7 +10,7 @@ gettext.install('gooroom-client-server-register', '/usr/share/gooroom/locale')
 example_v1 = """v1.0)gooroom-client-server-register noninteractive -d gkm.gooroom.kr
                                                  [-C /usr/local/share/ca-certificates/server.crt]
                                                   -n client003 -u gooroom
-                                                  -u gooroom
+                                                 [-u gooroom]
                                                  [-t Default]
                                                   -i admin_id
                                                   -p admin_password
@@ -21,7 +21,7 @@ example = """>v1.0)gooroom-client-server-register noninteractive -d gkm.gooroom.
                                             [-C /usr/local/share/ca-certificates/server.crt]
                                             [ -r 2] #0:create 1:update 2:create or update
                                             [ -m ipaddress]
-                                             -u gooroom
+                                            [-u gooroom]
                                             [-t Default]
                                              -i admin_id
                                              -p admin_password
@@ -32,7 +32,7 @@ example_regkey = """>v1.0)gooroom-client-server-register noninteractive-regkey -
                                             [-C /usr/local/share/ca-certificates/server.crt]
                                             [ -r 2] #0:create 1:update 2:create or update
                                             [ -m ipaddress]
-                                             -u gooroom
+                                            [-u gooroom]
                                             [-t Default]
                                              -k registration key
                                             [-e 2020-01-01]
@@ -67,7 +67,7 @@ def argument_parser():
     ni_parser.add_argument('-C', '--CAfile', help=_('(Option)PEM format file of gooroom root CA certificate'), nargs='?')
     ni_parser.add_argument('-n', '--cn', help=_('Unique CN to use for the client certificate'))
     ni_parser.add_argument('-m', '--name', help=_('(Option)Client name to distinguish from others:default=ip'), default=clientip)
-    ni_parser.add_argument('-u', '--unit', required=True, help=_('Client organizational unit to use for the client certificate'))
+    ni_parser.add_argument('-u', '--unit', help=_('Client organizational unit to use for the client certificate'))
     ni_parser.add_argument('-t', '--password-system-type', help=_('Password system type to use for the password hashing.'), default='Default', nargs='?')
     ni_parser.add_argument('-i', '--id', help=_('GPMS admin ID'))
     ni_parser.add_argument('-p', '--password', help=_('GPMS admin password'))
@@ -82,7 +82,7 @@ def argument_parser():
     ni_regkey_parser.add_argument('-d', '--domain', required=True, help=_('Key management server hostname'))
     ni_regkey_parser.add_argument('-C', '--CAfile', help=_('(Option)PEM format file of gooroom root CA certificate'), nargs='?')
     ni_regkey_parser.add_argument('-m', '--name', help=_('Option)Client name to distinguish from others:default=ip'), default=clientip)
-    ni_regkey_parser.add_argument('-u', '--unit', required=True, help=_('Client organizational unit to use for the client certificate'))
+    ni_regkey_parser.add_argument('-u', '--unit', help=_('Client organizational unit to use for the client certificate'))
     ni_regkey_parser.add_argument('-t', '--password-system-type', help=_('Password system type to use for the password hashing.'), default='Default', nargs='?')
     ni_regkey_parser.add_argument('-e', '--expiration-date', help=_('(Option)Certificates expiration date(format:YYYY-MM-DD)'), default='', nargs='?')
     ni_regkey_parser.add_argument('-c', '--comment', help=_('(Option)Description of the certificate'), nargs='?')
