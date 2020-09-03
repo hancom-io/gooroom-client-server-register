@@ -161,7 +161,7 @@ class GUIRegistering(Registering):
     def __init__(self):
         Registering.__init__(self)
         Gdk.threads_init()
-        glade_file = "/gooroom/gcsr/gooroom-client-server-register/usr/lib/gooroom/gooroomClientServerRegister/gooroomClientServerRegister.glade"
+        glade_file = "%s/gooroomClientServerRegister.glade" % self.WORK_DIR
         self.builder = Gtk.Builder()
         self.builder.add_from_file(glade_file)
 
@@ -171,17 +171,25 @@ class GUIRegistering(Registering):
         self.window.set_icon_name('gooroom-client-server-register')
         self.window.set_position(Gtk.WindowPosition.CENTER)
 
+        self.builder.connect_signals(self)
         self.builder.get_object('label1').set_text(_('Terminal Registration'))
         self.builder.get_object('label2').set_text(_('Authenticate the terminal and use the terminal conveniently.\n'\
                                                      'If you proceed with the registration process of the terminal,\n'\
                                                      'it helps the administrator in charge to control the terminal\n'\
                                                      'application, security, and browser infringement.'))
         self.builder.get_object('label3').set_text(_('Registration Key'))
-        self.builder.get_object('label4').set_text(_('Server Address'))
+        self.builder.get_object('label4').set_text(_('GKM Server Address'))
         self.builder.get_object('button1').set_label(_('Register'))
         self.builder.get_object('button1').connect('clicked', self.onRegisterPressed)
+        dg1 = self.builder.get_object('regkey_MD')
+        dg1.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK)
+        dg2 = self.builder.get_object('server_MD')
+        dg2.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK)
+        self.builder.get_object('regkey_info').connect('clicked', self.onRegkeyClick)
+        self.builder.get_object('server_info').connect('clicked', self.onServerClick)
         self.builder.get_object('entry_regkey1').set_placeholder_text(_('Enter the registration key'))
         self.builder.get_object('entry_serveraddr').set_placeholder_text(_('Enter the server address'))
+        self.builder.get_object('entry_serverip').set_placeholder_text(_('Enter the server ip'))
         self.builder.get_object('button_prev1').connect('clicked', self.prev_page_easy)
         self.builder.get_object('button_ok1').connect('clicked', Gtk.main_quit)
         self.builder.get_object('button_close1').connect('clicked', Gtk.main_quit)
@@ -194,6 +202,14 @@ class GUIRegistering(Registering):
         Gdk.threads_enter()
         Gtk.main()
         Gdk.threads_leave()
+
+    def onRegkeyClick(self, button):
+        self.show_info_dialog(_('Enter the terminal registration key issued by the GPMS administrator'))
+        return
+
+    def onServerClick(self, button):
+        self.show_info_dialog(_('Enter the domain and IP address of the GKM server'))
+        return
 
     def onRegisterPressed(self, button):
         textbuffer = self.builder.get_object('textbuffer_result')
@@ -381,7 +397,6 @@ class GUIRegistering(Registering):
     def show_info_dialog(self, message, error=None):
         dialog = Gtk.MessageDialog(self.builder.get_object('window1'), 0,
             Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 'info dialog')
-        dialog.set_title(_('Gooroom Management Server Registration'))
         dialog.format_secondary_text(message)
         dialog.set_icon_name('gooroom-client-server-register')
         dialog.props.text = error

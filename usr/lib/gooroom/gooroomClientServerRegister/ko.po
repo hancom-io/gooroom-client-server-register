@@ -182,9 +182,15 @@ msgstr "서버 등록 완료."
 msgid "Permission denied."
 msgstr "허가 거부"
 
+#: registering.py:170
+msgid "Gooroom Client Server Register"
+msgstr "구름 단말 서버 등록기"
+
+#: registering.py:174
 msgid "Terminal Registration"
 msgstr "단말 등록"
 
+#: registering.py:175
 msgid "Authenticate the terminal and use the terminal conveniently.\n"
 "If you proceed with the registration process of the terminal,\n"
 "it helps the administrator in charge to control the terminal\n"
@@ -194,24 +200,40 @@ msgstr "단말을 인증하시고 편리하게 단말을 사용하세요.\n"
 "브라우저 침해 등 여러 사항들을 담당 관리자가 제어를\n"
 "도와줍니다."
 
+#: registering.py:179
 msgid "Registration Key"
 msgstr "등록키"
 
-msgid "Server Address"
-msgstr "서버 주소"
+#: registering.py:180
+msgid "GKM Server Address"
+msgstr "GKM 서버 주소"
 
-msgid "easy"
-msgstr "등록키 간편 등록"
+#: registering.py:181
+msgid "Register"
+msgstr "등록"
 
-msgid "detail"
-msgstr "일반 등록"
-
-msgid "Enter the server address"
-msgstr "서버 주소를 입력하세요"
-
+#: registering.py:183
 msgid "Enter the registration key"
 msgstr "등록키를 입력하세요"
 
+#: registering.py:184
+msgid "Enter the server address"
+msgstr "서버 주소를 입력하세요"
+
+#: registering.py:185
+msgid "Enter the server ip"
+msgstr "서버 IP를 입력하세요"
+
+#: registering.py:190
+msgid "Result data"
+msgstr "결과 데이터"
+
+#: registering.py:220
 msgid "Check the server address"
 msgstr "서버 주소를 확인하세요"
 
+msgid "Enter the terminal registration key issued by the GPMS administrator"
+msgstr "GPMS 관리자로부터 발급받은 등록키를 입력하세요."
+
+msgid "Enter the domain and IP address of the GKM server"
+msgstr "GKM 서버의 도메인과 IP 주소를 입력하세요."
