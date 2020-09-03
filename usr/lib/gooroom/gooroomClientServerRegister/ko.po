@@ -182,237 +182,36 @@ msgstr "서버 등록 완료."
 msgid "Permission denied."
 msgstr "허가 거부"
 
-#: registering.py:144
-msgid "Gooroom Client Server Register"
-msgstr "구름 단말 서버 등록기"
+msgid "Terminal Registration"
+msgstr "단말 등록"
 
-#: registering.py:147
-msgid ""
-"Register Gooroom Root CA in the client.\n"
-"And, add gooroom platform management servers from the server."
-msgstr ""
-"단말에 구름 루트 CA를 등록 합니다.\n"
-"그리고, 구름 플랫폼 관리자 서버를 추가합니다."
+msgid "Authenticate the terminal and use the terminal conveniently.\n"
+"If you proceed with the registration process of the terminal,\n"
+"it helps the administrator in charge to control the terminal\n"
+"application, security, and browser infringement."
+msgstr "단말을 인증하시고 편리하게 단말을 사용하세요.\n"
+"단말의 등록 절차를 진행하시면 단말의 어플리케이션, 보안,\n"
+"브라우저 침해 등 여러 사항들을 담당 관리자가 제어를\n"
+"도와줍니다."
 
-#: registering.py:148
-msgid "How to regist certificate"
-msgstr "인증서 등록 방법"
-
-#: registering.py:149
-msgid "Create"
-msgstr "생성"
-
-#: registering.py:150
-msgid "Update"
-msgstr "재등록/갱신"
-
-#: registering.py:151
-msgid "Create or Update"
-msgstr "생성 혹은 갱신"
-
-#: registering.py:152
-msgid "Record in /etc/hosts"
-msgstr "/etc/hosts에 기록"
-
-#: registering.py:153
-msgid "GKM"
-msgstr "GKM"
-
-#: registering.py:154
-msgid "(Option)Select the certificate path of gooroom root CA"
-msgstr "(옵션)구름 루트 CA의 인증서를 선택하세요."
-
-#: registering.py:155
-msgid "Enter the domain name"
-msgstr "도메인 이름을 입력하세요"
-
-#: registering.py:157
-msgid "browse..."
-msgstr "탐색..."
-
-#: registering.py:158
-msgid "Register"
-msgstr "등록"
-
-#: registering.py:159
-msgid ""
-"Generate a certificate signing request(CSR) based on the input value\n"
-"to receive a certificate from the server."
-msgstr ""
-"입력 값을 기반으로 인증서 서명 요청(CSR)을 생성하여 \n"
-"서버로부터 인증서를 받습니다."
-
-#: registering.py:160
-msgid "Client ID"
-msgstr "단말 아이디"
-
-#: registering.py:161
-msgid "Client name"
-msgstr "단말 이름"
-
-#: registering.py:164
-msgid "Client organizational unit"
-msgstr "단말 조직 단위"
-
-#: registering.py:165
-msgid "Password system type"
-msgstr "비밀번호 체계"
-
-#: registering.py:166
-msgid "(Option)Certificate expiration date"
-msgstr "(옵션)인증서 유효 기간"
-
-#: registering.py:168
-msgid "Gooroom admin ID"
-msgstr "구름 관리자 ID"
-
-#: registering.py:169
-msgid "Password"
-msgstr "비밀번호"
-
-#: registering.py:170
-msgid "(Option)Comment"
-msgstr "(옵션)설명"
-
-#: registering.py:171
-msgid "Send the request to the gooroom platform management server."
-msgstr "구름 플랫폼 관리 서버에게 요청을 보냅니다."
-
-#: registering.py:172
-msgid "Result data"
-msgstr "결과 데이터"
-
-#: registering.py:190
-msgid "ID/PW"
-msgstr "아이디/비밀번호"
-
-#: registering.py:192 registering.py:194
-msgid "REGKEY"
+msgid "Registration Key"
 msgstr "등록키"
 
-#: registering.py:282 registering.py:287 registering.py:294 registering.py:301
-msgid "Enter ip address"
-msgstr "아이피주소를 입력하세요"
+msgid "Server Address"
+msgstr "서버 주소"
 
-#: registering.py:285 registering.py:292 registering.py:299
-msgid "This domain is set on the GPMS"
-msgstr "이 도메인은 관리서버에서 설정됩니다"
+msgid "easy"
+msgstr "등록키 간편 등록"
 
-#: registering.py:289
-msgid "GLM"
-msgstr "GLM"
+msgid "detail"
+msgstr "일반 등록"
 
-#: registering.py:296
-msgid "GRM"
-msgstr "GRM"
+msgid "Enter the server address"
+msgstr "서버 주소를 입력하세요"
 
-#: registering.py:303
-msgid "GPMS"
-msgstr "GPMS"
+msgid "Enter the registration key"
+msgstr "등록키를 입력하세요"
 
-#: registering.py:329
-msgid "Please enter the domain"
-msgstr "도메인을 입력하세요"
+msgid "Check the server address"
+msgstr "서버 주소를 확인하세요"
 
-#: registering.py:336
-msgid "GKM ip adress must be present"
-msgstr "GKM서버의 아이피주소를 입력하세요"
-
-#: registering.py:347
-msgid ""
-"Authentication server connection failed.\n"
-"Check the connection information and network status."
-msgstr ""
-"인증서버 접속에 실패했습니다.\n"
-"연결정보 및 네트워크 상태를 확인하세요."
-
-#: registering.py:384
-msgid "Select a certificate"
-msgstr "인증서 선택"
-
-#: registering.py:399
-msgid "Certificate files"
-msgstr "인증서"
-
-#: registering.py:404
-msgid "Any files"
-msgstr "모든 파일"
-
-#: registering.py:487
-msgid "Gooroom Management Server Registration"
-msgstr "구름 관리 서버 등록"
-
-#: registering.py:521
-msgid ""
-"Enter certificate registration type[0:create 1:update 2: create or update]: "
-msgstr "인증서 등록 타입을 입력하세요[0:생성 1:갱신 2:생성 혹은 갱신]: "
-
-#: registering.py:536
-msgid "Enter the client name"
-msgstr "단말 이름을 입력하세요"
-
-#: registering.py:537
-msgid "Enter the organizational unit: "
-msgstr "조직 단위를 입력하세요: "
-
-#: registering.py:540
-msgid "Enter the authentication type[0:id/password 1:regkey]: "
-msgstr "인증 타입을 입력하세요[0:아이디/비밀번호 1:등록키]: "
-
-#: registering.py:547
-msgid "Enter the gooroom admin ID: "
-msgstr "구름 관리자 ID를 입력하세요: "
-
-#: registering.py:548
-msgid "Enter the password: "
-msgstr "비밀번호를 입력하세요: "
-
-#: registering.py:551
-msgid "Enter the registration key: "
-msgstr "등록키를 입력하세요: "
-
-#: registering.py:554
-msgid "Enter the password system type[Default]: "
-msgstr "비밀번호 체계를 입력하세요: "
-
-#: registering.py:555
-msgid "(Option)Enter the valid date(YYYY-MM-DD): "
-msgstr "(옵션)유효 기간을 입력하세요(YYYY-MM-DD): "
-
-#: registering.py:556
-msgid "(Option)Enter the comment: "
-msgstr "(옵션)설명을 입력하세요: "
-
-#: registering.py:562
-msgid "Gooroom Client Server Register.\n"
-msgstr "구름 단말 서버 등록기.\n"
-
-#: registering.py:564
-msgid "Enter the domain name: "
-msgstr "도메인 이름을 입력하세요: "
-
-#: registering.py:565
-msgid "(Option)Enter the certificate path of gooroom root CA: "
-msgstr "(옵션)구름 루트 CA의 인증서 경로를 입력하세요: "
-
-#: registering.py:570
-msgid "Check the password system type!"
-msgstr "비밀번호 체계를 확인하세요."
-
-#~ msgid "Gooroom Client Server Register 0.9"
-#~ msgstr "구름 단말 서버 등록기 0.9"
-
-#~ msgid "Check the organizational unit."
-#~ msgstr "단말 조직 단위를 확인하세요."
-
-#~ msgid "Domain"
-#~ msgstr "도메인"
-
-#~ msgid "Organization"
-#~ msgstr "조직"
-
-#~ msgid "Enter the organization[Default]: "
-#~ msgstr "조직을 입력하세요[Default]: "
-
-#~ msgid "Check the organization!"
-#~ msgstr "조직을 확인하세요!"
