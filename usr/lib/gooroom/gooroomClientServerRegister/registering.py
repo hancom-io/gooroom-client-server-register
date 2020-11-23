@@ -39,24 +39,8 @@ class RegisterThread(threading.Thread):
         try:
             textbuffer = self.application.builder.get_object('textbuffer_result')
             client_data = next(self.datas)
-            server_certification = self.application.server_certification
-            sc = server_certification.certificate(client_data)
-            for server_result in sc:
-                result_text = self.result_format(server_result['log'])
-                current_text = textbuffer.get_text(textbuffer.get_start_iter(),
-                    textbuffer.get_end_iter(),
-                    True)
-
-                Gdk.threads_enter()
-                textbuffer.set_text('{0}\n{1}'.format(current_text, result_text))
-                Gdk.threads_leave()
-
-                if server_result['err']:
-                    raise Exception
-
-            server_data = next(self.datas)
             client_certification = certification.ClientCertification(client_data['domain'])
-            cc = client_certification.certificate(server_data)
+            cc = client_certification.certificate(client_data)
             for client_result in cc:
                 result_text = self.result_format(client_result['log'])
                 current_text = textbuffer.get_text(textbuffer.get_start_iter(),
@@ -559,13 +543,10 @@ class GUIRegistering(Registering):
 
     def get_datas(self):
         "Return input information. notebook page 0 and 1"
-        server_data = {}
-        server_data['domain'] = self.builder.get_object('entry_address').get_text()
-        server_data['path'] = self.builder.get_object('entry_file').get_text()
-        server_data['serverinfo'] = self.get_serverinfo()
-        yield server_data
-
         client_data = {}
+        client_data['domain'] = self.builder.get_object('entry_address').get_text()
+        client_data['path'] = self.builder.get_object('entry_file').get_text()
+        client_data['serverinfo'] = self.get_serverinfo()
         client_data['cn'] = self.builder.get_object('entry_cn').get_text()
         client_data['name'] = self.builder.get_object('entry_name').get_text()
         client_data['ou'] = self.builder.get_object('entry_classify').get_text()
@@ -622,11 +603,10 @@ class ShellRegistering(Registering):
 
         return user_input
 
-    def cli(self):
+    def cli(self, client_data):
         'Get request info from keyboard using cli'
 
         #SARABAL VERSION REQUEST
-        client_data = {}
         while True:
             cert_reg_type = self.input_surely(_('Enter certificate registration type[0:create 1:update 2: create or update]: '))
             if cert_reg_type != '0' and cert_reg_type != '1' and cert_reg_type != '2':
@@ -673,43 +653,32 @@ class ShellRegistering(Registering):
         return client_data
 
     def run(self, args):
+        client_data = {}
         if args.cmd == 'cli':
             print(_('Gooroom Client Server Register.\n'))
-            server_data = {}
-            server_data['domain'] = self.input_surely(_('Enter the domain name: '))
-            server_data['path'] = input(_('(Option)Enter the certificate path of gooroom root CA: '))
+            client_data['domain'] = self.input_surely(_('Enter the domain name: '))
+            client_data['path'] = input(_('(Option)Enter the certificate path of gooroom root CA: '))
 
         elif args.cmd == 'noninteractive':
-            server_data = {'domain':args.domain, 'path':args.CAfile}
+            client_data = {'domain':args.domain, 'path':args.CAfile}
 
         elif args.cmd == 'noninteractive-regkey':
-            server_data = {'domain':args.domain, 'path':args.CAfile}
+            client_data = {'domain':args.domain, 'path':args.CAfile}
 
         server_certification = certification.ServerCertification()
-        for ip_type in server_certification.get_root_certificate(server_data):
+        for ip_type in server_certification.get_root_certificate(client_data):
             self.ip_type=ip_type
 
-        self.do_certificate(args, server_certification, server_data)
+        self.do_certificate(args, server_certification, client_data)
 
-    def do_certificate(self, args, server_certification, server_data):
+    def do_certificate(self, args, server_certification, client_data):
         """
         certificate
         """
 
-        sc = server_certification.certificate(server_data)
-        for result in sc:
-            result_text = self.result_format(result['log'])
-            if result['err']:
-                print("###########ERROR(%s)###########" % result['err'])
-                print(result_text)
-                exit(result['err'])
-
-            print(result_text)
-
         if args.cmd == 'cli':
-            client_data = self.cli()
+            client_data = self.cli(client_data)
         elif args.cmd == 'noninteractive':
-            client_data = {}
             client_data['cn'] = self.make_cn()
             client_data['name'] = args.name
             if args.unit:
@@ -730,7 +699,6 @@ class ShellRegistering(Registering):
                 client_data['ipv4'] = ''
                 client_data['ipv6'] = self.make_ipv6name()
         elif args.cmd == 'noninteractive-regkey':
-            client_data = {}
             client_data['cn'] = self.make_cn()
             client_data['name'] = args.name
             if args.unit:
@@ -753,7 +721,7 @@ class ShellRegistering(Registering):
             print('can not support mode({})'.format(args.cmd))
             return
 
-        client_certification = certification.ClientCertification(server_data['domain'])
+        client_certification = certification.ClientCertification(client_data['domain'])
         cc = client_certification.certificate(client_data)
         for result in cc:
             result_text = self.result_format(result['log'])
