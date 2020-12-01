@@ -319,7 +319,7 @@ class ServerCertification(Certification):
                 if server_name == 'gkm':
                     continue
                 #add glm/grm/gpms
-                server_ip = gpms[server_name+'Ip']
+                server_ip = serverinfo['gkm'][1]
                 if server_ip:
                     hosts += '{0}\t{1}\n'.format(server_ip, gpms[server_url])
             hosts += '### Modify {} End gcsr\n'.format(modify_date)
