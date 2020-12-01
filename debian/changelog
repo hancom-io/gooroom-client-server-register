@@ -1,3 +1,21 @@
+gooroom-client-server-register (1.0.7+grm2u1) unstable; urgency=medium
+
+  [ junsungc ]
+  * [f7df8df9] Save gkm-server public key on /etc/ssl/private
+
+  [ Gooroom Autobuilder ]
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Fri, 20 Nov 2020 10:37:18 +0900
+
+gooroom-client-server-register (1.0.6+grm2u1) unstable; urgency=medium
+
+  [ junsungc ]
+  * [6f2e9b47] Changed the organizational-unit(on) value not necessary in cli mode.
+
+  [ Gooroom Autobuilder ]
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Fri, 31 Jul 2020 10:40:01 +0900
+
 gooroom-client-server-register (1.0.5+grm2u1) unstable; urgency=medium
 
   [ junsungc ]

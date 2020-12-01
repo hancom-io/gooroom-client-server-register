@@ -75,12 +75,24 @@ class Certification():
         with open(self.config_file, 'w') as conf_file:
             config.write(conf_file)
 
+    def _save_key(self, key, fullpath):
+        """save key and change owner.
+        Return ssl privite path
+        """
+        ssl_cert_gid = grp.getgrnam('ssl-cert').gr_gid
+
+        with open(fullpath, 'wb') as key_file:
+            key_file.write(key)
+
+        shutil.chown(fullpath, group=ssl_cert_gid)
+        os.chmod(fullpath, 0o640)
 
 class ServerCertification(Certification):
 
     def __init__(self):
         Certification.__init__(self)
         self.root_crt_path = '/usr/local/share/ca-certificates/gooroom_root.crt'
+        self.server_key = '/etc/ssl/private/gooroom_server.key'
         self.err_msg = _('Fail to register Gooroom Platform Management Server complete.')
 
     def certificate(self, data):
@@ -190,6 +202,10 @@ class ServerCertification(Certification):
             certs = ssl_conn.get_peer_cert_chain()
             server_crt = ssl_conn.get_peer_certificate()
             server_crt = OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, server_crt)
+            x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, server_crt)
+            pubkey = x509.get_pubkey()
+            pubkeys = OpenSSL.crypto.dump_publickey(OpenSSL.crypto.FILETYPE_PEM,pubkey)
+            self._save_key(pubkeys, self.server_key)
 
             # TODO: register all key chain
             root_crt = OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, certs[-1])
@@ -403,8 +419,8 @@ class ClientCertification(Certification):
                 f.write(response_data['data'][0]['certInfo'])
                 del response_data['data'][0]['certInfo']
 
-            self.__save_key(private_key, self.client_key)
-            self.__save_key(public_key, self.public_key_path)
+            self._save_key(private_key, self.client_key)
+            self._save_key(public_key, self.public_key_path)
             #del private_key
 
             self.result['log'].append(response_data['status']['message'])
@@ -434,7 +450,7 @@ class ClientCertification(Certification):
                 OpenSSL.crypto.FILETYPE_PEM, key)
             public_key = OpenSSL.crypto.dump_publickey(
                 OpenSSL.crypto.FILETYPE_PEM, key)
-            self.__save_key(private_key, self.client_key)
+            self._save_key(private_key, self.client_key)
             obj_private_key = obj_public_key = key
         else:
             with open(self.public_key_path) as f:
@@ -445,18 +461,6 @@ class ClientCertification(Certification):
                 obj_private_key = OpenSSL.crypto.load_privatekey(OpenSSL.crypto.FILETYPE_PEM, private_key)
 
         return obj_private_key, private_key, public_key, obj_public_key
-
-    def __save_key(self, key, fullpath):
-        """save key and change owner.
-        Return ssl privite path
-        """
-        ssl_cert_gid = grp.getgrnam('ssl-cert').gr_gid
-
-        with open(fullpath, 'wb') as key_file:
-            key_file.write(key)
-
-        shutil.chown(fullpath, group=ssl_cert_gid)
-        os.chmod(fullpath, 0o640)
 
     def generate_csr(self, common_name, organizational_unit):
         req = OpenSSL.crypto.X509Req()
