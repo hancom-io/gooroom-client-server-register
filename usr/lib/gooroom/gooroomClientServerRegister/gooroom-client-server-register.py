@@ -7,27 +7,6 @@ import registering
 
 gettext.install('gooroom-client-server-register', '/usr/share/gooroom/locale')
 
-example_v1 = """v1.0)gooroom-client-server-register noninteractive -d gkm.gooroom.kr
-                                                 [-C /usr/local/share/ca-certificates/server.crt]
-                                                  -n client003 -u gooroom
-                                                 [-u gooroom]
-                                                 [-t Default]
-                                                  -i admin_id
-                                                  -p admin_password
-                                                 [-e 2020-01-01]
-                                                 [-c 2F ooo]"""
-
-example = """>v1.0)gooroom-client-server-register noninteractive -d gkm.gooroom.kr
-                                            [-C /usr/local/share/ca-certificates/server.crt]
-                                            [ -r 2] #0:create 1:update 2:create or update
-                                            [ -m ipaddress]
-                                            [-u gooroom]
-                                            [-t Default]
-                                             -i admin_id
-                                             -p admin_password
-                                            [-e 2020-01-01]
-                                            [-c 2F ooo]"""
-
 example_regkey = """>v1.0)gooroom-client-server-register noninteractive-regkey -d gkm.gooroom.kr
                                             [-C /usr/local/share/ca-certificates/server.crt]
                                             [ -r 2] #0:create 1:update 2:create or update
@@ -43,10 +22,6 @@ autoregisteration_help ="""To automatically register your client to Gooroom Plat
 def usage():
     print('ex)gooroom-client-server-register gui\n')
     print('ex)gooroom-client-server-register cli\n')
-    print(example_v1)
-    print('\n')
-    print(example)
-    print('\n')
     print(example_regkey)
     print('\n')
     print(autoregisteration_help)
@@ -59,7 +34,7 @@ def argument_parser():
     subparsers.required = True
     gui_parser = subparsers.add_parser('gui', help=_('Run as gtk graphical user interface'))
     cli_parser = subparsers.add_parser('cli', help=_('Run as command line interface'))
-    ni_parser = subparsers.add_parser('noninteractive', description=example,
+    ni_parser = subparsers.add_parser('noninteractive',
                                       help=_('Run as Noninteractive with shell.'),
                                       formatter_class=argparse.RawTextHelpFormatter)
     ni_help = subparsers.add_parser('noninteractive --help', help=_('Print help on the noninteractive command'))

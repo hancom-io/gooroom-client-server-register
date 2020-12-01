@@ -439,21 +439,10 @@ class ShellRegistering(Registering):
             client_ip = self.make_ipname()
             client_data['name'] = \
                 input(_('Enter the client name')+'[{}]: '.format(client_ip)) or client_ip
-            client_data['ou'] = self.input_surely(_('Enter the organizational unit: '))
+            client_data['ou'] = ''
 
-        while True:
-            api_type = self.input_surely(_('Enter the authentication type[0:id/password 1:regkey]: '))
-            if api_type != '0' and api_type != '1':
-                continue
-            break
-
-        if api_type == '0':
-            api_type = 'id/pw'
-            client_data['user_id'] = self.input_surely(_('Enter the gooroom admin ID: '))
-            client_data['user_pw'] = getpass.getpass(_('Enter the password: '))
-        else:
-            api_type = 'regkey'
-            client_data['regkey'] = self.input_surely(_('Enter the registration key: '))
+        api_type = 'regkey'
+        client_data['regkey'] = self.input_surely(_('Enter the registration key: '))
         client_data['api_type'] = api_type
 
         client_data['password_system_type'] = "sha256"
@@ -481,7 +470,7 @@ class ShellRegistering(Registering):
             server_data = {'domain':args.domain, 'path':args.CAfile}
 
         server_certification = certification.ServerCertification()
-        for ip_type in server_certification.get_root_certificate({'domain':domain, 'path':path}):
+        for ip_type in server_certification.get_root_certificate({'domain':server_data['domain'], 'path':""}):
             self.ip_type=ip_type
 
         self.do_certificate(args, server_certification, server_data)
@@ -507,7 +496,7 @@ class ShellRegistering(Registering):
             client_data = {}
             client_data['cn'] = self.make_cn()
             client_data['name'] = args.name
-            client_data['ou'] = args.unit
+            client_data['ou'] = ''
             client_data['password_system_type'] = "sha256"
             client_data['user_id'] = args.id
             client_data['user_pw'] = args.password
@@ -525,7 +514,7 @@ class ShellRegistering(Registering):
             client_data = {}
             client_data['cn'] = self.make_cn()
             client_data['name'] = args.name
-            client_data['ou'] = args.unit
+            client_data['ou'] = ''
             client_data['password_system_type'] = "sha256"
             client_data['valid_date'] = args.expiration_date
             client_data['comment'] = args.comment
