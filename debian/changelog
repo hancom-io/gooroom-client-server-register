@@ -1,3 +1,13 @@
+gooroom-client-server-register (1.0.7+grm2u1+han2u1) unstable; urgency=medium
+
+  [ junsungc ]
+  * [21b5e2f9] Update hancom-2.0
+  * [a3e2afbf] Add ko.po & Add Help Message Dialog
+  * [aa1f2b7c] Bug fix noninteractive mode
+  * [ee257410] Bug fix write /etc/hosts
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Thu, 03 Dec 2020 09:42:05 +0900
+
 gooroom-client-server-register (1.0.7+grm2u1) unstable; urgency=medium
 
   [ junsungc ]
