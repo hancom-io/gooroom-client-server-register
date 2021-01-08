@@ -264,6 +264,22 @@ class ServerCertification(Certification):
         False : get root certificate from server certificate chain."""
         domain = data['domain']
         local_crt_path = data['path']
+
+        # get root certificate from gooroom key server certificate chain
+        if ':' in domain:
+            port = int(domain.strip('\n').split(':')[-1])
+        else:
+            port = 443
+
+        addrinfo = socket.getaddrinfo(domain, port, 0, 0, socket.SOL_TCP)
+
+        if addrinfo[0][0] == socket.AF_INET: #IPv4
+            ipver = socket.AF_INET
+            yield "ipv4"
+        else:
+            ipver = socket.AF_INET6
+            yield "ipv6"
+
         if local_crt_path:
             # get root certificate from local path
             # TODO: need to verify certificate
@@ -271,21 +287,6 @@ class ServerCertification(Certification):
                 self.remove_file(self.root_crt_path)
                 shutil.copy(local_crt_path, self.root_crt_path)
         else:
-            # get root certificate from gooroom key server certificate chain
-            if ':' in domain:
-                port = int(domain.strip('\n').split(':')[-1])
-            else:
-                port = 443
-
-            addrinfo = socket.getaddrinfo(domain, port, 0, 0, socket.SOL_TCP)
-
-            if addrinfo[0][0] == socket.AF_INET: #IPv4
-                ipver = socket.AF_INET
-                yield "ipv4"
-            else:
-                ipver = socket.AF_INET6
-                yield "ipv6"
-
             s = socket.socket(ipver, socket.SOCK_STREAM, 0)
             s.settimeout(5)
             s.connect((domain, port))
@@ -441,15 +442,19 @@ class ClientCertification(Certification):
             del si
 
         try:
+            req_data = data
             get_header_url = 'https://%s/gkm/v1/gpms' % data['domain']
             res = requests.get(url=get_header_url, timeout=5)
             if 'MyHeader' in res.headers:
                 self.kcmvp_on_off = 'on' if res.headers['MyHeader']=='kcmvpon' else 'off'
-            req_data = data
             if self.kcmvp_on_off == 'on':
                 req_data['csr'] = req_data['csr'].decode('utf8')
                 req_data = self.jsonParsing(req_data)
                 req_data = json.dumps(req_data)
+        except Exception as error:
+            print("failed: get header")
+
+        try:
             print(req_data)
             res = requests.post(url, data=req_data, timeout=30)
             response_data = self.response(res)
