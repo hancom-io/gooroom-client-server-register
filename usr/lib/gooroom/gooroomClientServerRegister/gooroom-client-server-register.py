@@ -55,6 +55,7 @@ def argument_parser():
                                       formatter_class=argparse.RawTextHelpFormatter)
     ni_regkey_help = subparsers.add_parser('noninteractive-regkey --help', help=_('Print help on the noninteractive-regkey command'))
     ni_regkey_parser.add_argument('-d', '--domain', required=True, help=_('Key management server hostname'))
+    ni_regkey_parser.add_argument('-I', '--IP', required=True, help=_('Key management server IP'))
     ni_regkey_parser.add_argument('-C', '--CAfile', help=_('(Option)PEM format file of gooroom root CA certificate'), nargs='?')
     ni_regkey_parser.add_argument('-m', '--name', help=_('Option)Client name to distinguish from others:default=ip'), default=clientip)
     ni_regkey_parser.add_argument('-u', '--unit', help=_('Client organizational unit to use for the client certificate'))

@@ -461,15 +461,14 @@ class ShellRegistering(Registering):
             print(_('Gooroom Client Server Register.\n'))
             server_data = {}
             server_data['domain'] = self.input_surely(_('Enter the domain name: '))
-            server_data['path'] = input(_('(Option)Enter the certificate path of gooroom root CA: '))
-
-        elif args.cmd == 'noninteractive':
-            server_data = {'domain':args.domain, 'path':args.CAfile}
+            server_data['ip'] = self.input_surely(_('Enter the IP Address: '))
+            server_data['serverinfo'] = {'gkm': (server_data['domain'], server_data['ip'])}
 
         elif args.cmd == 'noninteractive-regkey':
-            server_data = {'domain':args.domain, 'path':args.CAfile}
+            server_data = {'domain':args.domain, 'path':args.CAfile, 'serverinfo':{'gkm': (args.domain, args.IP)}}
 
         server_certification = certification.ServerCertification()
+        server_certification.add_hosts_gkm(server_data['serverinfo'])
         for ip_type in server_certification.get_root_certificate({'domain':server_data['domain'], 'path':""}):
             self.ip_type=ip_type
 
