@@ -1,3 +1,10 @@
+gooroom-client-server-register (1.0.8+grm2u1+han2u1) unstable; urgency=medium
+
+  [ junsungc ]
+  * [626a85b2] Update registration [cli & noninteractive-regkey] mode
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Thu, 01 Apr 2021 15:19:07 +0900
+
 gooroom-client-server-register (1.0.7+grm2u1+han2u1) unstable; urgency=medium
 
   [ junsungc ]
