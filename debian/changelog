@@ -1,3 +1,14 @@
+gooroom-client-server-register (1.0.8+grm2u1) unstable; urgency=medium
+
+  [ junsungc ]
+  * [11f969ab] Change sequence (CSR - getHost) Add kcmvp module & Read kcmvp_on_off from headers
+  * [0871d376] 'ip_type' Bug fix. The bug that occurs when gcsr receive a  location on root CA path
+  * [39d2a96c] Remove libMagicCrypto *.so files
+
+  [ Gooroom Autobuilder ]
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Thu, 01 Apr 2021 09:44:30 +0900
+
 gooroom-client-server-register (1.0.7+grm2u1) unstable; urgency=medium
 
   [ junsungc ]
