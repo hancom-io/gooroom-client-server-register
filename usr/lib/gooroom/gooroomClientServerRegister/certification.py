@@ -17,6 +17,9 @@ from datetime import datetime
 import OpenSSL
 import requests
 
+import json
+import wscp
+
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.SecurityWarning)
 
@@ -27,8 +30,10 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gtk
 
-class Certification():
+kcmvp_on_off = 'off'
+kcmvp_vendor = 'none'
 
+class Certification():
     def __init__(self):
         self.result = {'err':None, 'log':[]}
         self.config_dir = '/etc/gooroom/gooroom-client-server-register'
@@ -53,15 +58,9 @@ class Certification():
         response type is json type, if not raise error.
         convert to dictionay, then return data"""
         if res.status_code == 200:
-            data = res.json()
+            return res.json()
         else:
             raise ResponseError('Status Code:[{0}], {1}'.format(res.status_code, res.text))
-
-        if data['status']['result'] == 'success':
-            return data
-        else:
-            # fail to get data
-            raise ResponseError('Result code:[{0}], {1}'.format(data['status']['resultCode'], data['status']['message']))
 
     def _save_config(self, section, section_data):
         "Save config file. Section is config section name, section_data is dictionary of section."
@@ -292,8 +291,18 @@ class ServerCertification(Certification):
         #####request glm/grm/gpms infos
         url = 'https://%s/gkm/v1/gpms' % domain
         res = requests.get(url, timeout=5)
-
+        global kcmvp_on_off
+        global kcmvp_vendor
+        if 'Kcmvp-Status' in res.headers:
+            kcmvp_on_off = 'on' if res.headers['Kcmvp-Status']=='kcmvpon' else 'off'
+        if kcmvp_on_off == 'on':
+            kcmvp_vendor = res.headers['Kcmvp-Vendor']
         response_data = self.response(res)
+
+        if kcmvp_vendor == 'penta':
+            scp = wscp.WrappedSCP(1024)
+            ret, response_data = scp.WSCP_DecB64(response_data['encMessage'])
+            response_data = json.loads(response_data)
         gpms = response_data['data'][0]
 
         modify_date = int(gpms['modifyDate']) / 1000
@@ -411,9 +420,18 @@ class ClientCertification(Certification):
         self.result['log'] = []
 
         try:
-            print(data)
-            res = requests.post(url, data=data, timeout=30)
+            req_data = data
+            if kcmvp_on_off == 'on':
+                req_data['csr'] = req_data['csr'].decode('utf8')
+                req_data = self.jsonParsing(req_data)
+                req_data = json.dumps(req_data)
+            print(req_data)
+            res = requests.post(url, data=req_data, timeout=30)
             response_data = self.response(res)
+            if kcmvp_vendor == 'penta':
+                scp = wscp.WrappedSCP(1024)
+                ret, response_data = scp.WSCP_DecB64(response_data['encMessage'])
+                response_data = json.loads(response_data)
             # save crt
             with open(self.client_crt, 'w') as f:
                 f.write(response_data['data'][0]['certInfo'])
@@ -438,6 +456,18 @@ class ClientCertification(Certification):
             self.result['log'].append(_('Client registration completed.'))
 
         yield self.result
+
+    def jsonParsing(self, data):
+        scheme = '{"encMessage" : {}}'
+        scheme = json.loads(scheme)
+        data = json.dumps(data)
+        if kcmvp_vendor == 'penta':
+            scp = wscp.WrappedSCP(1024)
+            ret, enc = scp.WSCP_EncB64(data)
+            if ret != 0 :
+                print("WSCP_EncB64 error :", ret)
+        scheme['encMessage'] = enc
+        return scheme
 
     def __generate_key(self):
         """Generate key using gooroom client rsa/2048 key pair"""
@@ -484,7 +514,9 @@ class ClientCertification(Certification):
             'password_system_type':password_system_type.lower(),
             'client_crt':self.client_crt,
             'client_name':client_name,
-            'server_crt':sc.root_crt_path}
+            'server_crt':sc.root_crt_path,
+            'kcmvp_on_off':kcmvp_on_off,
+            'kcmvp_vendor':kcmvp_vendor}
 
         return certificate_data
 
