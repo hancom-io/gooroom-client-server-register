@@ -1,3 +1,12 @@
+gooroom-client-server-register (1.0.9+han3u1) unstable; urgency=medium
+
+  [ hnc-cjs ]
+  * [6a45467e] 기존 단말 자동등록 스크립트를 python으로 마이그레이션
+  * [da3b300a] kcmvp (penta) 모듈 추가
+  * [4de69384] hosts에 적을 때 port 삭제
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Mon, 08 Aug 2022 13:53:06 +0900
+
 gooroom-client-server-register (1.0.8+grm2u1+han2u1) unstable; urgency=medium
 
   [ junsungc ]
