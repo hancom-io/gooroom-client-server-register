@@ -1,3 +1,10 @@
+gooroom-client-server-register (1.1.0+han3u1) unstable; urgency=medium
+
+  [ hnc-cjs ]
+  * [126d4e4d] -I 옵션 필수값 해제
+
+ -- Gooroom Autobuilder <jenkins@gooroom.kr>  Tue, 09 Aug 2022 21:01:48 +0900
+
 gooroom-client-server-register (1.0.9+han3u1) unstable; urgency=medium
 
   [ hnc-cjs ]
