@@ -390,6 +390,18 @@ class ClientCertification(Certification):
 
         return hashlib.sha256((kargs['id']+hash_tmp).encode()).hexdigest()
 
+    def getCodename(self):
+        try:
+            with open('/etc/gooroom/info') as file:
+                for line in file:
+                    print(line.rstrip())
+                    seperator = line.split('=')
+                    if seperator[0] == 'CODENAME':
+                        return seperator[1]
+        except Exception as error:
+            print('getCodename eror', error)
+        return ''
+
     def certificate(self, data):
         api_type = data['api_type']
 
@@ -399,6 +411,7 @@ class ClientCertification(Certification):
         #self.remove_file(self.client_key)
         csr, private_key, public_key = self.generate_csr(data['cn'], data['ou'])
         data['csr'] = csr
+        data['client_type'] = self.getCodename()
 
         cert_reg_type = data['cert_reg_type']
         if api_type == 'id/pw':
